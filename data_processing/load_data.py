@@ -7,7 +7,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.DEBUG
                     )
 
-target2idx = {'FAVOR':1,'AGAINST':-1,'NONE':0}
+target2idx = {'FAVOR':1,'AGAINST':0,'NONE':2}
 
 def load_data(file_path,return_label = False):
     logging.debug('加载data集from：%s' % (file_path))
@@ -29,7 +29,8 @@ def load_data(file_path,return_label = False):
         y = data['STANCE'].apply(lambda x:target2idx[x])
         return X,y
 
-    print X
+    return X
+
 if __name__=='__main__':
     dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                             'dev_data.csv'
