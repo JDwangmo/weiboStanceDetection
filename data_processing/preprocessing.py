@@ -8,9 +8,11 @@ import numpy as np
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.DEBUG
                     )
-# 最大句子填充完长度
-MAX_SENTENCE_LENGTH = 173
-
+# 最大句子填充完长度,如果超过就截断，如果少就填充
+MAX_SENTENCE_LENGTH = 150
+START_CHAR = u'[start]'
+END_CHAR = u'[end]'
+PAD_CHAR = u'[None]'
 
 def data_detail(data):
     '''
@@ -115,23 +117,44 @@ def clean_data(data):
 
 def to_vector(data):
     '''
+    为data创建一个字典
     将为data中句子生成句子向量，并返回字典频率、target正、负、中的概率等
     :param data:
     :return: data,(freq_pos,freq_neg,freq_non),target_dict
     '''
     logging.debug('开始转换数据成向量的形式...')
     sentences = [item.split(',') for item in data['SEGMENT_SENTENCES']]
-
-    dictionary = set(itertools.chain(*sentences))
     # 由于部分句子过滤后出现空串，所以字典会出现空串，这里将空串这个移除
-    # 暂且不去掉，作为一个特殊符号保存
-    # dictionary.remove('')
+    logging.debug('移除空串')
+    [item.remove('') for item in sentences if item.__contains__('')]
+    # 创建字典
+    dictionary = set(itertools.chain(*sentences))
+    # 增加两个特殊字符，开始标记和结束标记
+    start_char = START_CHAR
+    end_char = END_CHAR
+    pad_char = PAD_CHAR
+    logging.info(u'增加两个特殊字符，开始标记(%s)和结束标记(%s)'%(start_char,end_char))
+    logging.info(u'增加一个特殊字符，填充标记(%s)'%(pad_char))
+    dictionary.add(start_char)
+    dictionary.add(end_char)
+    dictionary.add(pad_char)
+
     dict_size = len(dictionary)
     logging.debug('字典大小为：%d'%(dict_size))
     idx2word = list(dictionary)
     word2idx = { item:idx for idx,item in enumerate(dictionary)}
+    logging.debug(u'开始标记(%s)、结束标记(%s)和填充标记(%s)的字典索引分别为：%d，%d，%d'%(
+        start_char,
+        end_char,
+        pad_char,
+        word2idx[start_char],
+        word2idx[end_char],
+        word2idx[pad_char]
+    ))
     # print word2idx
-    sentence_to_index = lambda x : [word2idx.get(item,-1) for item in x]
+    # 将句子转成整数的字典索引
+    # 如果出现未知字符，则使用none字符填充
+    sentence_to_index = lambda x : [word2idx.get(item,word2idx[pad_char]) for item in [start_char]+x+[end_char]]
     indexs = [ sentence_to_index(items) for items in sentences]
     # print indexs[0]
     vectors = []
@@ -147,23 +170,22 @@ def to_vector(data):
     count_neg = sum(vectors[(data['STANCE']=='AGAINST').as_matrix()])
     count_non = sum(vectors[(data['STANCE']=='NONE').as_matrix()])
     count_all = sum(vectors)
+
+
     pos_word =  [i for i,item in enumerate(count_pos) if item!=0]
     neg_word =  [i for i,item in enumerate(count_neg) if item!=0]
     non_word =  [i for i,item in enumerate(count_non) if item!=0]
-    # logging.debug('正例中出现的词有%d个'%(len(pos_word)))
-    # logging.debug('负例中出现的词有%d个'%(len(neg_word)))
-    # logging.debug('中立中出现的词有%d个'%(len(non_word)))
     logging.debug(u'正例词(%d个):'%(len(pos_word))+ ','.join([idx2word[i] for i in pos_word]))
     logging.debug(u'负例词(%d个):'%(len(neg_word)) + ','.join([idx2word[i] for i in neg_word]))
     logging.debug(u'中立词(%d个):'%(len(non_word)) +','.join([idx2word[i] for i in non_word]))
 
-    freq_pos = count_pos/(count_all*1.0)
-    freq_neg = count_neg/(count_all*1.0)
-    freq_non = count_non/(count_all*1.0)
-    # print freq_pos
-    # print freq_neg
-    # print freq_non
-    index_to_freq = lambda x:np.asarray([[freq_pos[item],freq_neg[item],freq_non[item]] for item in x])
+    freq_pos = np.nan_to_num(count_pos/(count_all*1.0))
+    freq_neg = np.nan_to_num(count_neg/(count_all*1.0))
+    freq_non = np.nan_to_num(count_non/(count_all*1.0))
+
+    index_to_freq = lambda x:np.asarray([[freq_pos[item],
+                                          freq_neg[item],
+                                          freq_non[item]] for item in x])
     sentences_freqs = [index_to_freq(item) for item in indexs]
 
     # print sentences_freqs[0].shape
@@ -178,27 +200,62 @@ def to_vector(data):
         g_count_all = len(g)
         target_dict[target] = np.array([g_count_pos,g_count_neg,g_count_non])/(g_count_all*1.0)
         # print target_dict[target]
-
-    vector_prob = []
-    # 原始句子最大长度172,所有句子补全为173长度的句子
+    # 原始句子最大长度172
     max_sentence_length = MAX_SENTENCE_LENGTH
-    for target,sent in zip(data['TARGET'],sentences_freqs):
-        # print len(sent)
-        if len(sent)<max_sentence_length:
+    logging.info('设置句子长度为：%d'%(max_sentence_length))
+    vector_prob = []
+    indexs_padding = []
+    for target,sent_freq,index in zip(data['TARGET'],sentences_freqs,indexs):
+        # print sent_freq
+        # print len(sent_freq)
+        # print len(index)
+
+        if len(sent_freq)<max_sentence_length:
+            # 句子长度小于最长句子长度，将其padding
             # print len(sent)
-            padding_length = max_sentence_length - len(sent)
+            padding_length = max_sentence_length - len(sent_freq)
 
             # print '需要填充%d'%(padding_length)
-            sentence_after_padding = np.concatenate([sent,padding_length*[target_dict[target]]])
+            sentence_after_padding = np.concatenate([sent_freq,padding_length*[target_dict[target]]])
             vector_prob.append(sentence_after_padding)
             # print sentence_after_padding
             # print len(sentence_after_padding)
-    # quit()
+            # 使用none字符填充
+            index = np.pad(index,(0,padding_length),mode='constant',constant_values=word2idx[pad_char])
+            indexs_padding.append(np.asarray(index))
+        elif len(sent_freq)>max_sentence_length:
+            # 句子长度超过最长句子长度，将其截断
+            # 计算每个词的信息熵
+            # print sent
+            entropy = np.zeros(len(sent_freq))
+            for items in sent_freq.transpose():
+                entropy += -np.nan_to_num(np.log2(items))*items
+            # 只取信息熵大的前n个词
+            best_n_word = np.argsort(entropy)[:max_sentence_length]
+            # 重新排序，不要打乱原有句子词序
+            best_n_word.sort()
+            # print best_n_word
+            sent_freq = sent_freq[best_n_word]
+            vector_prob.append(sent_freq)
+            index = np.asarray(index)[best_n_word]
+            indexs_padding.append(index)
+
+        else:
+            vector_prob.append(sent_freq)
+            indexs_padding.append(np.asarray(index))
+
+
     # print len(vector_prob)
+
     vector_prob = [item.flatten() for item in vector_prob]
     array_to_str = lambda x: ','.join(['%.5f' % (item) for item in x])
     vector_prob = [array_to_str(item) for item in vector_prob]
+
+    int_array_to_str = lambda x: ','.join([str(item) for item in x])
+    indexs_padding = [int_array_to_str(item) for item in indexs_padding]
+
     data['VECTOR_PROB'] = vector_prob
+    data['INDEXS_PADDING'] = indexs_padding
 
     return data,word2idx,(freq_pos,freq_neg,freq_non),target_dict
 
@@ -212,39 +269,80 @@ def testdata_to_vector(data,word2idx,freq,target_dict):
     '''
     freq_pos, freq_neg, freq_non = freq
     # 增加一个元素在最后的原因，是预留给OOV的词的，如果该词是OOV，则赋予概率为0
-    freq_pos.__add__(0)
-    freq_neg.__add__(0)
-    freq_non.__add__(0)
+    # freq_pos.__add__(0)
+    # freq_neg.__add__(0)
+    # freq_non.__add__(0)
     logging.debug('开始使用已有字典转换数据成向量的形式...')
     sentences = [item.split(',') for item in data['SEGMENT_SENTENCES']]
-    word_to_freq = lambda x: \
-        np.asarray([[freq_pos[word2idx.get(item,-1)], freq_neg[word2idx.get(item,-1)], freq_non[word2idx.get(item,-1)]] for item in x])
-    sentences_freqs = [word_to_freq(item) for item in sentences]
-    # 对句子补全
+    # 将句子转成整数的字典索引
+    # 如果出现未知字符，则使用none字符填充
+    sentence_to_index = lambda x: [word2idx.get(item, word2idx[PAD_CHAR]) for item in [START_CHAR] + x + [END_CHAR]]
+    indexs = [sentence_to_index(items) for items in sentences]
+
+    index_to_freq = lambda x: np.asarray([[freq_pos[item], freq_neg[item], freq_non[item]] for item in x])
+    sentences_freqs = [index_to_freq(item) for item in indexs]
+
+
+    # word_to_freq = lambda x: \
+    #     np.asarray([[freq_pos[word2idx.get(item,-1)],
+    #                  freq_neg[word2idx.get(item,-1)],
+    #                  freq_non[word2idx.get(item,-1)]] for item in x])
+    # sentences_freqs = [word_to_freq(item) for item in sentences]
+    # 对句子补全或截断
     vector_prob = []
-    # 句子最大长度172,所有句子补全为173长度的句子
+    indexs_padding = []
     max_sentence_length = MAX_SENTENCE_LENGTH
-    for target, sent in zip(data['TARGET'], sentences_freqs):
-        # print len(sent)
-        if len(sent) < max_sentence_length:
+    for target, sent_freq, index in zip(data['TARGET'], sentences_freqs, indexs):
+        # print sent_freq
+        # print len(sent_freq)
+        # print len(index)
+
+        if len(sent_freq) < max_sentence_length:
+            # 句子长度小于最长句子长度，将其padding
             # print len(sent)
-            padding_length = max_sentence_length - len(sent)
+            padding_length = max_sentence_length - len(sent_freq)
 
             # print '需要填充%d'%(padding_length)
-            sentence_after_padding = np.concatenate([sent, padding_length * [target_dict[target]]])
+            sentence_after_padding = np.concatenate([sent_freq, padding_length * [target_dict[target]]])
             vector_prob.append(sentence_after_padding)
             # print sentence_after_padding
             # print len(sentence_after_padding)
+            # 使用none字符填充
+            index = np.pad(index, (0, padding_length), mode='constant', constant_values=word2idx[PAD_CHAR])
+            indexs_padding.append(np.asarray(index))
+        elif len(sent_freq) > max_sentence_length:
+            # 句子长度超过最长句子长度，将其截断
+            # 计算每个词的信息熵
+            # print sent
+            entropy = np.zeros(len(sent_freq))
+            for items in sent_freq.transpose():
+                entropy += -np.nan_to_num(np.log2(items)) * items
+            # 只取信息熵大的前n个词
+            best_n_word = np.argsort(entropy)[:max_sentence_length]
+            # 重新排序，不要打乱原有句子词序
+            best_n_word.sort()
+            # print best_n_word
+            sent_freq = sent_freq[best_n_word]
+            vector_prob.append(sent_freq)
+            index = np.asarray(index)[best_n_word]
+            indexs_padding.append(index)
+
+        else:
+            vector_prob.append(sent_freq)
+            indexs_padding.append(np.asarray(index))
     # print len(vector_prob)
     # print vector_prob[0].shape
     # quit()
     vector_prob = [item.flatten() for item in vector_prob]
-    array_to_str = lambda x: ','.join(['%.5f' % (item) for item in x])
-    vector_prob = [array_to_str(item) for item in vector_prob]
+    float_array_to_str = lambda x: ','.join(['%.5f' % (item) for item in x])
+    vector_prob = [float_array_to_str(item) for item in vector_prob]
     # print vector_prob[0]
+    int_array_to_str = lambda x: ','.join([str(item) for item in x])
+    indexs_padding = [int_array_to_str(item) for item in indexs_padding]
 
 
     data['VECTOR_PROB'] = vector_prob
+    data['INDEXS_PADDING'] = indexs_padding
     return data
 
 
@@ -280,7 +378,7 @@ def main_processing_dataA():
 
     # print dev_dataA.head()
     dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                              'dev_data.csv'
+                              'dev_data_%dlen.csv'%(MAX_SENTENCE_LENGTH)
     logging.debug('将dev data集保存到：%s'%(dev_dataA_result_path))
     dev_dataA.to_csv(dev_dataA_result_path,
                        sep='\t',
@@ -289,7 +387,7 @@ def main_processing_dataA():
                        )
     # print dev_dataA.shape
     test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                              'test_data.csv'
+                              'test_data_%dlen.csv'%(MAX_SENTENCE_LENGTH)
     logging.debug('将test data集保存到：%s'%(test_dataA_result_path))
     test_dataA.to_csv(test_dataA_result_path,
                        sep='\t',

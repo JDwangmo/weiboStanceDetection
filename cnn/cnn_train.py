@@ -32,7 +32,7 @@ X_test = X_test.reshape(X_test.shape[0],1,X_test.shape[1],X_test.shape[2])
 y_test_onehot = np_utils.to_categorical(y_test,3)
 
 # cnn arch
-image_row,image_col = 173,3
+image_row,image_col = 150,3
 # 创建一个模型
 model = Sequential()
 # 多窗口核卷积层

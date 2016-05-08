@@ -16,9 +16,9 @@ X_test, y_test = load_data(test_dataA_result_path,
 X_test = X_test.reshape(X_test.shape[0],1,X_test.shape[1],X_test.shape[2])
 y_test_onehot = np_utils.to_categorical(y_test,3)
 # 多少次迭代
-nb_epoch = 32
+nb_epoch = 100
 # 多少种类型的卷积核
-num_wins = 5
+num_wins = 8
 model_architecture = '/home/jdwang/PycharmProjects/weiboStanceDetection/cnn/model/' \
                      'cnn_model_architecture_%depoch_%dwin.json'%(nb_epoch,num_wins)
 model_weights = '/home/jdwang/PycharmProjects/weiboStanceDetection/cnn/model/' \
@@ -37,7 +37,7 @@ model.compile(loss='categorical_crossentropy',
               )
 
 
-y_pred = model.predict_classes(X_test)
+y_pred = model.predict_classes([X_test]*num_wins)
 is_correct = sum(y_pred==y_test)
 accuary = is_correct / (len(y_test)*1.0)
 print '正确的个数：%d,准确率：%f'%(is_correct,accuary)
