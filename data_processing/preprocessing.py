@@ -12,12 +12,13 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
 MAX_SENTENCE_LENGTH = 150
 START_CHAR = u'[start]'
 END_CHAR = u'[end]'
-PAD_CHAR = u'[None]'
+PAD_CHAR = u'[none]'
 
-def data_detail(data):
+def data_detail(data,has_stance = True):
     '''
     展示数据的详细信息
     :param data: Dateframe对象
+    :param has_stance: 是否有STANCE字段
     :return: 无
     '''
     logging.debug('data的个数为：%d'%(len(data)))
@@ -26,16 +27,22 @@ def data_detail(data):
 
     logging.debug('data的target和个数分别为：')
     logging.debug(data['TARGET'].value_counts())
-    logging.debug('统计每个Target下各个类型立场的数量...')
-    group = data.groupby(by=['TARGET','STANCE'])
-    logging.debug( group.count())
+    if has_stance:
+        logging.debug('统计每个Target下各个类型立场的数量...')
+        group = data.groupby(by=['TARGET','STANCE'])
+        logging.debug( group.count())
+    else:
+        logging.debug('没有STANCE字段')
 
     logging.debug('数据各个字段情况...')
     # print data.info()
     for column in data.columns:
+        # 统计每个字段是否有数据是空串
+        # 先将所有空字符串用nan替换
+        data[column] = data[column].replace(r'^\s*$',np.nan,regex=True)
         count_null = sum(data[column].isnull())
         if count_null!=0:
-            logging.warn('%s字段有空值，个数：%d'%(column,count_null))
+            logging.warn('%s字段有空值，个数：%d,建议使用processing_na_value()方法进一步处理！'%(column,count_null))
             null_data_path = './null_data.csv'
             logging.warn('将缺失值数据输出到文件：%s'%(null_data_path))
             data[data[column].isnull()].to_csv(null_data_path,
@@ -43,26 +50,31 @@ def data_detail(data):
                                                sep='\t')
 
 
-def processing_na_value(data,clear_na=True,fill_na = False,fill_char = 'NULL'):
+def processing_na_value(data,clear_na=True,fill_na = False,fill_char = 'NULL',columns=None):
     '''
     处理数据的空值
     :param data:  Dateframe对象
     :param clear_na: bool,是否去掉空值数据
     :param fill_na: bool，是否填充空值
     :param fill_char: str，填充空置的字符
+    :param column: list，需要处理的字段，默认为None时，对所有字段处理
     :return: Dateframe对象
     '''
+    logging.debug('[def processing_na_value()] 对缺失值进行处理....')
     for column in data.columns:
-        count_null = sum(data[column].isnull())
-        if count_null != 0:
-            logging.warn('%s字段有空值，个数：%d' % (column, count_null))
-            if clear_na:
-                logging.warn('对数据的%s字段空值进行摘除'%(column))
-                data = data[data[column].notnull()]
-            else:
-                if fill_na:
-                    logging.warn('对数据的%s字段空值进行填充，填充字符为：%s'%(column,fill_char))
-                    data[column] = data[column].fillna(value=fill_char)
+        if columns == None or column in columns:
+            data[column] = data[column].replace(r'^\s*$', np.nan, regex=True)
+            count_null = sum(data[column].isnull())
+            if count_null != 0:
+                logging.warn('%s字段有空值，个数：%d' % (column, count_null))
+                if clear_na:
+                    logging.warn('对数据的%s字段空值进行摘除'%(column))
+                    data = data[data[column].notnull()]
+                else:
+                    if fill_na:
+                        logging.warn('对数据的%s字段空值进行填充，填充字符为：%s'%(column,fill_char))
+                        data[column] = data[column].fillna(value=fill_char)
+
     return data
 
 def split_train_test(data,train_split = 0.7):
@@ -88,9 +100,10 @@ def split_train_test(data,train_split = 0.7):
     return dev_data,test_data
 
 def clean_data(data):
-    logging.debug('开始清理数据...')
+    logging.debug('[def clean_data()]开始清理数据...')
     # 原始句子列表
-    origin_sentences = data['TEXT']
+    # 把空值使用nan替换，不然nan数据去进行下一步关于字符串的操作时会报错
+    origin_sentences = data['TEXT'].replace(np.nan,'')
     # print origin_sentences
     # 使用正则过滤掉非中文的字符
     pattern = re.compile(u'[^\u4e00-\u9fa5]+')
@@ -100,17 +113,16 @@ def clean_data(data):
     segment_text = lambda x:\
         ','.join([item for item in jieba.cut(x,cut_all=True) if len(item.strip())!=0])
     segment_sentences = clean_sentences.apply(segment_text)
-
-    data['CLEAN_SENTENCES'] = clean_sentences
-    data['SEGMENT_SENTENCES'] = segment_sentences
-    max_length = max([len(item.split(',')) for item in segment_sentences])
-    logging.debug(u'最长' +','.join([item for item in segment_sentences if len(item.split(',')) ==max_length]))
-    logging.debug('最大句子长度为%d'%(max_length))
     # 检查过滤后，是否出现空句子
     for i, items in enumerate(clean_sentences):
         # print items
         if len(items.strip())==0:
             logging.warn('第%d句在过滤后出现空句子'%(i+1))
+    data['CLEAN_SENTENCES'] = clean_sentences
+    data['SEGMENT_SENTENCES'] = segment_sentences
+    max_length = max([len(item.split(',')) for item in segment_sentences])
+    logging.debug(u'最长: ' +','.join([item for item in segment_sentences if len(item.split(',')) ==max_length]))
+    logging.debug('最大句子长度为%d'%(max_length))
 
     return data
 
@@ -365,7 +377,8 @@ def main_processing_dataA():
     train_dataA = processing_na_value(train_dataA,
                                       clear_na=False,
                                       fill_na=True,
-                                      fill_char='NONE')
+                                      fill_char='NONE',
+                                      columns=None)
 
     train_dataA = clean_data(train_dataA)
 
@@ -378,7 +391,7 @@ def main_processing_dataA():
 
     # print dev_dataA.head()
     dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                              'dev_data_%dlen.csv'%(MAX_SENTENCE_LENGTH)
+                              'dev_dataA_%dlen.csv'%(MAX_SENTENCE_LENGTH)
     logging.debug('将dev data集保存到：%s'%(dev_dataA_result_path))
     dev_dataA.to_csv(dev_dataA_result_path,
                        sep='\t',
@@ -387,7 +400,7 @@ def main_processing_dataA():
                        )
     # print dev_dataA.shape
     test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                              'test_data_%dlen.csv'%(MAX_SENTENCE_LENGTH)
+                              'test_dataA_%dlen.csv'%(MAX_SENTENCE_LENGTH)
     logging.debug('将test data集保存到：%s'%(test_dataA_result_path))
     test_dataA.to_csv(test_dataA_result_path,
                        sep='\t',
@@ -398,15 +411,38 @@ def main_processing_dataA():
     logging.debug('保存完成！')
 
 def main_processing_dataB():
+    '''
+    该数据处理流程主要是：对空值进行处理，切分句子，保存到文件
+    :return:
+    '''
     train_dataB_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                             'evasampledata4-TaskAR.txt'
     train_dataB = pd.read_csv(train_dataB_file_path,
                               sep='\t',
                               header=0)
     logging.debug('show the detail of task B')
-    data_detail(train_dataB)
-    # train_dataB = clean_data(train_dataB)
+    data_detail(train_dataB,has_stance=False)
+    # 将空串数据去除
+    train_dataB = clean_data(train_dataB)
+    train_dataB = processing_na_value(train_dataB,
+                                      clear_na=True,
+                                      fill_na=False,
+                                      fill_char='',
+                                      columns=['SEGMENT_SENTENCES']
+                                      )
+
+    dataB_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
+                            'dataB_%dlen.csv' % (MAX_SENTENCE_LENGTH)
+
+
+    logging.debug('将data集保存到：%s' % (dataB_result_path))
+    train_dataB.to_csv(dataB_result_path,
+                       sep='\t',
+                       index=None,
+                       encoding='utf8'
+                       )
 
 if __name__ =='__main__':
 
-    main_processing_dataA()
+    # main_processing_dataA()
+    main_processing_dataB()

@@ -32,7 +32,7 @@ def load_data(file_path,return_label = False):
 
     if return_label:
         logging.debug('返回标签')
-        y = data['STANCE'].apply(lambda x:target2idx[x])
+        y = data['STANCE'].apply(lambda x:target2idx[x]).as_matrix()
         return X,y
 
     return X
@@ -62,6 +62,23 @@ def load_data_indexs(file_path,return_label = False):
         return X, y
 
     return X
+
+
+def load_data_segment(file_path):
+
+    logging.debug('[load_data_segment()] 加载data集from：%s' % (file_path))
+    data = pd.read_csv(file_path,
+                       sep='\t',
+                       encoding='utf8',
+                       header=0
+                       )
+    str_to_array = lambda x : x.split(',')
+    segment_sentences = data['SEGMENT_SENTENCES'].apply(str_to_array)
+    segment_sentences = segment_sentences.as_matrix()
+
+    logging.debug((u'segment sentences的shape为：(%s,)'%(segment_sentences.shape)))
+    return segment_sentences
+
 
 
 if __name__=='__main__':
