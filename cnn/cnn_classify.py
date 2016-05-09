@@ -4,11 +4,12 @@ from data_processing.load_data import load_data
 from keras.models import model_from_json
 from keras.utils import np_utils
 
-target2idx = {'FAVOR':1,'AGAINST':0,'NONE':2}
-idx2target = target2idx.keys()
+target2idx = {'AGAINST':0,'FAVOR':1,'NONE':2}
+
+idx2target = sorted(target2idx.keys(),key=lambda x:target2idx[x])
 
 test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                         'test_data.csv'
+                         'test_data_150len.csv'
 
 X_test, y_test = load_data(test_dataA_result_path,
                            return_label=True
@@ -42,12 +43,13 @@ is_correct = sum(y_pred==y_test)
 accuary = is_correct / (len(y_test)*1.0)
 print '正确的个数：%d,准确率：%f'%(is_correct,accuary)
 
-test_data = pd.read_csv('/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data.csv',
+test_data = pd.read_csv(test_dataA_result_path,
                        sep='\t',
                        encoding='utf8',
                        header=0
                        )
 test_data['IS_CORRECT'] =  (y_pred==y_test)
+
 test_data['PREDICT'] =  [idx2target[item] for item in y_pred]
 result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/cnn/result/' \
               'cnn_result_%depoch_%dwin.csv'%(nb_epoch,num_wins)

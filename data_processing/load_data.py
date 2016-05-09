@@ -7,7 +7,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.DEBUG
                     )
 
-target2idx = {'FAVOR':1,'AGAINST':0,'NONE':2}
+target2idx = {'AGAINST':0,'FAVOR':1,'NONE':2}
 
 def load_data(file_path,return_label = False):
     '''
