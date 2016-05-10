@@ -1,6 +1,6 @@
 #encoding=utf8
 
-from data_processing.load_data import load_data
+from data_processing.load_data import load_data__prob
 from keras.models import Sequential
 from keras.layers import Convolution2D,MaxPooling2D,Activation,Flatten,Dense,Dropout,Merge,Input
 from keras.utils import np_utils
@@ -15,9 +15,9 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
 dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                         'dev_data_150len.csv'
 
-X_dev, y_dev = load_data(dev_dataA_result_path,
-                         return_label=True
-                         )
+X_dev, y_dev = load_data__prob(dev_dataA_result_path,
+                               return_label=True
+                               )
 X_dev = X_dev.reshape(X_dev.shape[0],1,X_dev.shape[1],X_dev.shape[2])
 y_dev_onehot = np_utils.to_categorical(y_dev,3)
 
@@ -25,9 +25,9 @@ y_dev_onehot = np_utils.to_categorical(y_dev,3)
 test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                          'test_data_150len.csv'
 
-X_test, y_test = load_data(test_dataA_result_path,
-                           return_label=True
-                           )
+X_test, y_test = load_data__prob(test_dataA_result_path,
+                                 return_label=True
+                                 )
 X_test = X_test.reshape(X_test.shape[0],1,X_test.shape[1],X_test.shape[2])
 y_test_onehot = np_utils.to_categorical(y_test,3)
 

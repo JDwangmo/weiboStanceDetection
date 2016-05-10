@@ -12,7 +12,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
 
 
 dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                        'dev_data_150len.csv'
+                        'dev_dataA_150len.csv'
 
 X_dev, y_dev = load_data_indexs(dev_dataA_result_path,
                                 return_label=True
@@ -20,7 +20,7 @@ X_dev, y_dev = load_data_indexs(dev_dataA_result_path,
 
 
 test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                         'test_data_150len.csv'
+                         'test_dataA_150len.csv'
 
 X_test, y_test = load_data_indexs(test_dataA_result_path,
                                   return_label=True

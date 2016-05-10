@@ -9,7 +9,19 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
 
 target2idx = {'AGAINST':0,'FAVOR':1,'NONE':2}
 
-def load_data(file_path,return_label = False):
+
+def load_data(file_path):
+    logging.debug('加载data集from：%s' % (file_path))
+    data = pd.read_csv(file_path,
+                       sep='\t',
+                       encoding='utf8',
+                       header=0
+                       )
+
+    return data
+
+
+def load_data__prob(file_path, return_label = False):
     '''
     加载数据的概率向量
     :param file_path:
@@ -65,7 +77,6 @@ def load_data_indexs(file_path,return_label = False):
 
 
 def load_data_segment(file_path):
-
     logging.debug('[load_data_segment()] 加载data集from：%s' % (file_path))
     data = pd.read_csv(file_path,
                        sep='\t',
@@ -74,10 +85,11 @@ def load_data_segment(file_path):
                        )
     str_to_array = lambda x : x.split(',')
     segment_sentences = data['SEGMENT_SENTENCES'].apply(str_to_array)
-    segment_sentences = segment_sentences.as_matrix()
+    X = segment_sentences.as_matrix()
+    logging.debug((u'segment sentences的shape为：(%s,)'%(X.shape)))
 
-    logging.debug((u'segment sentences的shape为：(%s,)'%(segment_sentences.shape)))
-    return segment_sentences
+
+    return X
 
 
 
@@ -85,9 +97,9 @@ if __name__=='__main__':
     dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                             'dev_data_150len.csv'
 
-    X_dev,y_dev = load_data(dev_dataA_result_path,
-                    return_label = True
-                    )
+    X_dev,y_dev = load_data__prob(dev_dataA_result_path,
+                                  return_label = True
+                                  )
 
     X_dev,y_dev = load_data_indexs(dev_dataA_result_path,
                                    return_label = True
@@ -98,8 +110,8 @@ if __name__=='__main__':
     test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                              'test_data_150len.csv'
 
-    X_test, y_test = load_data(test_dataA_result_path,
-                     return_label=True
-                     )
+    X_test, y_test = load_data__prob(test_dataA_result_path,
+                                     return_label=True
+                                     )
     # print X_test.shape
     # print y_test.shape

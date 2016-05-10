@@ -1,6 +1,6 @@
 #encoding=utf8
 import pandas as pd
-from data_processing.load_data import load_data
+from data_processing.load_data import load_data__prob
 from keras.models import model_from_json
 from keras.utils import np_utils
 
@@ -11,9 +11,9 @@ idx2target = sorted(target2idx.keys(),key=lambda x:target2idx[x])
 test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                          'test_data_150len.csv'
 
-X_test, y_test = load_data(test_dataA_result_path,
-                           return_label=True
-                           )
+X_test, y_test = load_data__prob(test_dataA_result_path,
+                                 return_label=True
+                                 )
 X_test = X_test.reshape(X_test.shape[0],1,X_test.shape[1],X_test.shape[2])
 y_test_onehot = np_utils.to_categorical(y_test,3)
 # 多少次迭代

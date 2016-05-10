@@ -13,6 +13,7 @@ dataB_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/
                   'dataB_150len.csv'
 
 dataA = load_data_segment(dataA_file_path)
+
 dataB = load_data_segment(dataB_file_path)
 
 sentences = np.concatenate((dataA,dataB),axis=0)

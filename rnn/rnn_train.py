@@ -14,7 +14,7 @@ MAX_SENTENCE_LENGTH = 150
 DICT_SIZE = 15465
 
 dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                        'dev_data_150len.csv'
+                        'dev_dataA_150len.csv'
 
 
 X_dev, y_dev = load_data_indexs(dev_dataA_result_path,
@@ -25,7 +25,7 @@ y_dev_onehot = np_utils.to_categorical(y_dev,3)
 
 
 test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                         'test_data_150len.csv'
+                         'test_dataA_150len.csv'
 
 X_test, y_test = load_data_indexs(test_dataA_result_path,
                                   return_label=True
@@ -55,13 +55,20 @@ model = Sequential()
 #
 # model = Model(input=input_sentence, output=output)
 
-model.add(Embedding(DICT_SIZE,300, dropout=0.9,input_length=MAX_SENTENCE_LENGTH))
 m1 = Sequential()
-m1.add(LSTM(128, dropout_W=0.8, dropout_U=0.8,input_shape=(MAX_SENTENCE_LENGTH,300),return_sequences=True,consume_less='gpu'))
+m1.add(Embedding(DICT_SIZE,300, dropout=0.9,input_length=MAX_SENTENCE_LENGTH))
+m1.add(LSTM(128, dropout_W=0.8,
+            dropout_U=0.8,
+            input_shape=(MAX_SENTENCE_LENGTH,300),
+            return_sequences=True))
 m2 = Sequential()
-m2.add(LSTM(128, dropout_W=0.8, dropout_U=0.8,input_shape=(MAX_SENTENCE_LENGTH,300),go_backwards=True,return_sequences=True,consume_less='gpu'))
-print m2.summary()
-model.add(Merge([m1,m2],mode='sum'))
+m2.add(Embedding(DICT_SIZE,300, dropout=0.9,input_length=MAX_SENTENCE_LENGTH))
+m2.add(LSTM(128, dropout_W=0.8,
+            dropout_U=0.8,input_shape=(MAX_SENTENCE_LENGTH,300),
+            go_backwards=True,
+            return_sequences=True))
+model.add(Merge([m1,m2],mode='concat'))
+print model.summary()
 quit()
 model.add(LSTM(128))
 model.add(Dense(50))

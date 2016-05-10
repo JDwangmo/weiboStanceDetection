@@ -69,7 +69,7 @@ def processing_na_value(data,clear_na=True,fill_na = False,fill_char = 'NULL',co
                 logging.warn('%s字段有空值，个数：%d' % (column, count_null))
                 if clear_na:
                     logging.warn('对数据的%s字段空值进行摘除'%(column))
-                    data = data[data[column].notnull()]
+                    data = data[data[column].notnull()].copy()
                 else:
                     if fill_na:
                         logging.warn('对数据的%s字段空值进行填充，填充字符为：%s'%(column,fill_char))
@@ -99,30 +99,52 @@ def split_train_test(data,train_split = 0.7):
     # print test_data
     return dev_data,test_data
 
-def clean_data(data):
+def clean_data(data,columns = None,filter_char = False):
+    '''
+    清理数据：过滤部分字符，分词切句
+    :param data: Dateframe对象
+    :param columns:list，需要处理的字段，默认为None时，对所有字段处理
+    :param filter_char:bool，是否过滤字符
+    :return:
+    '''
     logging.debug('[def clean_data()]开始清理数据...')
-    # 原始句子列表
-    # 把空值使用nan替换，不然nan数据去进行下一步关于字符串的操作时会报错
-    origin_sentences = data['TEXT'].replace(np.nan,'')
-    # print origin_sentences
-    # 使用正则过滤掉非中文的字符
-    pattern = re.compile(u'[^\u4e00-\u9fa5]+')
-    filter_not_chinese_text = lambda x : pattern.sub(' ',x.decode('utf8'))
-    clean_sentences = origin_sentences.apply(filter_not_chinese_text)
-    # 分词处理
-    segment_text = lambda x:\
-        ','.join([item for item in jieba.cut(x,cut_all=True) if len(item.strip())!=0])
-    segment_sentences = clean_sentences.apply(segment_text)
-    # 检查过滤后，是否出现空句子
-    for i, items in enumerate(clean_sentences):
-        # print items
-        if len(items.strip())==0:
-            logging.warn('第%d句在过滤后出现空句子'%(i+1))
-    data['CLEAN_SENTENCES'] = clean_sentences
-    data['SEGMENT_SENTENCES'] = segment_sentences
-    max_length = max([len(item.split(',')) for item in segment_sentences])
-    logging.debug(u'最长: ' +','.join([item for item in segment_sentences if len(item.split(',')) ==max_length]))
-    logging.debug('最大句子长度为%d'%(max_length))
+    if columns == None:
+        logging.warn('注意：现在对所有字段进行clean和segment,please spec the columns！')
+
+    logging.warn('是否开启过滤字符功能：%s'%(filter_char))
+
+    for column in data.columns:
+        if columns == None or column in columns:
+            logging.warn('现在处理字段：%s...'%(column))
+            if data[column].dtype != object:
+                logging.warn('字段(%s)不是字符串类型，直接跳过不处理！'%(column))
+                continue
+            # 原始句子列表
+            # 把空值使用nan替换，不然nan数据去进行下一步关于字符串的操作时会报错
+            texts = data[column].replace(np.nan,'')
+            # print origin
+            if filter_char:
+                # 使用正则过滤掉非中文的字符
+                pattern = re.compile(u'[^\u4e00-\u9fa5]+')
+                filter_not_chinese_text = lambda x : pattern.sub(' ',x.decode('utf8'))
+                texts = texts.apply(filter_not_chinese_text)
+                data['CLEAN_%s'%(column.upper())] = texts
+
+            # 检查，是否出现空句子
+            for i, items in enumerate(texts):
+                # print items
+                if len(items.strip())==0:
+                    logging.warn('第%d句出现空句子'%(i+1))
+            # 分词处理
+            segment_text = lambda x:\
+                ','.join([item for item in jieba.cut(x,cut_all=True) if len(item.strip())!=0])
+            segment_sentences = texts.apply(segment_text)
+            data['SEGMENT_%s'%(column.upper())] = segment_sentences
+
+            max_length = max([len(item.split(',')) for item in segment_sentences])
+            logging.debug(u'最长: ' +','.join([item for item in segment_sentences
+                                             if len(item.split(',')) ==max_length]))
+            logging.debug('最大句子长度为%d'%(max_length))
 
     return data
 
@@ -135,7 +157,7 @@ def to_vector(data):
     :return: data,(freq_pos,freq_neg,freq_non),target_dict
     '''
     logging.debug('开始转换数据成向量的形式...')
-    sentences = [item.split(',') for item in data['SEGMENT_SENTENCES']]
+    sentences = [item.split(',') for item in data['SEGMENT_TEXT']]
     # 由于部分句子过滤后出现空串，所以字典会出现空串，这里将空串这个移除
     logging.debug('移除空串')
     [item.remove('') for item in sentences if item.__contains__('')]
@@ -285,7 +307,7 @@ def testdata_to_vector(data,word2idx,freq,target_dict):
     # freq_neg.__add__(0)
     # freq_non.__add__(0)
     logging.debug('开始使用已有字典转换数据成向量的形式...')
-    sentences = [item.split(',') for item in data['SEGMENT_SENTENCES']]
+    sentences = [item.split(',') for item in data['SEGMENT_TEXT']]
     # 将句子转成整数的字典索引
     # 如果出现未知字符，则使用none字符填充
     sentence_to_index = lambda x: [word2idx.get(item, word2idx[PAD_CHAR]) for item in [START_CHAR] + x + [END_CHAR]]
@@ -373,14 +395,23 @@ def main_processing_dataA():
                               header=0)
     logging.debug('show the detail of task A')
     # data_detail(train_dataA)
+    # 过滤字符和分词
+    train_dataA = clean_data(train_dataA,
+                             columns=['TEXT'],
+                             filter_char=True
+                             )
+    train_dataA = clean_data(train_dataA,
+                             columns=['TARGET'],
+                             filter_char=False
+                             )
+
     # 处理空值数据
     train_dataA = processing_na_value(train_dataA,
-                                      clear_na=False,
+                                      clear_na=True,
                                       fill_na=True,
                                       fill_char='NONE',
                                       columns=None)
 
-    train_dataA = clean_data(train_dataA)
 
     dev_dataA, test_dataA = split_train_test(train_dataA, train_split=0.7)
     #
@@ -422,13 +453,21 @@ def main_processing_dataB():
                               header=0)
     logging.debug('show the detail of task B')
     data_detail(train_dataB,has_stance=False)
-    # 将空串数据去除
-    train_dataB = clean_data(train_dataB)
+    # 过滤字符和分词
+    train_dataB = clean_data(train_dataB,
+                             columns=['TEXT'],
+                             filter_char= True
+                             )
+    train_dataB = clean_data(train_dataB,
+                             columns=['TARGET'],
+                             filter_char= False
+                             )
+
     train_dataB = processing_na_value(train_dataB,
                                       clear_na=True,
                                       fill_na=False,
                                       fill_char='',
-                                      columns=['SEGMENT_SENTENCES']
+                                      columns=['SEGMENT_TEXT']
                                       )
 
     dataB_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
@@ -444,5 +483,5 @@ def main_processing_dataB():
 
 if __name__ =='__main__':
 
-    # main_processing_dataA()
-    main_processing_dataB()
+    main_processing_dataA()
+    # main_processing_dataB()
