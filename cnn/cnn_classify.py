@@ -9,7 +9,7 @@ target2idx = {'AGAINST':0,'FAVOR':1,'NONE':2}
 idx2target = sorted(target2idx.keys(),key=lambda x:target2idx[x])
 
 test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                         'test_data_150len.csv'
+                         'test_dataA_150len.csv'
 
 X_test, y_test = load_data__prob(test_dataA_result_path,
                                  return_label=True
@@ -17,7 +17,7 @@ X_test, y_test = load_data__prob(test_dataA_result_path,
 X_test = X_test.reshape(X_test.shape[0],1,X_test.shape[1],X_test.shape[2])
 y_test_onehot = np_utils.to_categorical(y_test,3)
 # 多少次迭代
-nb_epoch = 100
+nb_epoch = 5
 # 多少种类型的卷积核
 num_wins = 8
 model_architecture = '/home/jdwang/PycharmProjects/weiboStanceDetection/cnn/model/' \
@@ -49,6 +49,7 @@ test_data = pd.read_csv(test_dataA_result_path,
                        header=0
                        )
 test_data['IS_CORRECT'] =  (y_pred==y_test)
+
 
 test_data['PREDICT'] =  [idx2target[item] for item in y_pred]
 result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/cnn/result/' \

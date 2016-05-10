@@ -13,7 +13,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
 
 
 dev_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                        'dev_data_150len.csv'
+                        'dev_dataA_150len.csv'
 
 X_dev, y_dev = load_data__prob(dev_dataA_result_path,
                                return_label=True
@@ -23,7 +23,7 @@ y_dev_onehot = np_utils.to_categorical(y_dev,3)
 
 
 test_dataA_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                         'test_data_150len.csv'
+                         'test_dataA_150len.csv'
 
 X_test, y_test = load_data__prob(test_dataA_result_path,
                                  return_label=True

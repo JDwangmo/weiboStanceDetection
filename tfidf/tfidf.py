@@ -3,7 +3,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 import numpy as np
 from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import classification_report
 from data_processing.load_data import load_data
 
 
@@ -19,26 +18,63 @@ test_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_
 
 test_data = load_data(test_dataA_file_path)
 
-print dev_data.head()
-dev_data['SEGMENT_SENTENCES'] = dev_data['SEGMENT_SENTENCES'].apply(lambda x:' '.join(x.split(',')))
-X_dev = [items for items in dev_data['SEGMENT_SENTENCES'] + ' ' + dev_data['TARGET']]
-print X_dev
-quit()
+X_train = [items for items in dev_data['SEGMENT_TEXT'] + ',' +dev_data['SEGMENT_TARGET']]
+X_train = [' '.join(items.split(',')) for items in X_train]
+X_eval = [items for items in test_data['SEGMENT_TEXT'] + ',' +test_data['SEGMENT_TARGET']]
+X_eval = [' '.join(items.split(',')) for items in X_eval]
 
-#
-# #clf = SGDClassifier(loss='hinge', penalty='l1', n_iter=20, shuffle=True, verbose=True, n_jobs=2, average=False)
-# train_d = [tweet for tweet in training_data['Tweet'] + ' ' + training_data['Target']]
-# eval_d = [tweet for tweet in eval_data['Tweet'] + ' ' + eval_data['Target']]
-#
-# vectorizer = TfidfVectorizer(ngram_range=(1, 2), max_df=1.0, min_df=1, binary=True, norm='l2', use_idf=True, smooth_idf=False, sublinear_tf=True, encoding='latin1')
-#
-# X_train = vectorizer.fit_transform(train_d)
-# X_eval = vectorizer.transform(eval_d)
-# Y_train = np.asarray([stance for stance in training_data['Stance']])
-# Y_eval = np.asarray([stance for stance in eval_data['Stance']])
-#
-# tuned_parameters = {'alpha': [10 ** a for a in range(-12, 0)]}
-# clf = GridSearchCV(SGDClassifier(loss='hinge', penalty='elasticnet',l1_ratio=0.75, n_iter=10, shuffle=True, verbose=False, n_jobs=4, average=False)
-#                   , tuned_parameters, cv=10, scoring='f1_weighted')
-# clf.fit(X_train, Y_train)
-#
+Y_train = np.asarray([stance for stance in dev_data['STANCE']])
+Y_eval = np.asarray([stance for stance in test_data['STANCE']])
+
+vectorizer = TfidfVectorizer(ngram_range=(1,1),
+                             max_df=1.0,
+                             lowercase=False,
+                             min_df=1,
+                             binary=True,
+                             norm='l2',
+                             use_idf=True,
+                             smooth_idf=False,
+                             sublinear_tf=True,
+                             token_pattern=u'(?u)\\b\w+\\b',
+                             encoding='utf8')
+
+
+X_train = vectorizer.fit_transform(X_train)
+X_eval = vectorizer.transform(X_eval)
+# print vectorizer.get_feature_names()
+# print vectorizer[u'IphoneSE']
+
+tuned_parameters = {'alpha': [10 ** a for a in range(-12, 0)]}
+clf = GridSearchCV(SGDClassifier(loss='hinge',
+                                 random_state=0,
+                                 penalty='elasticnet',
+                                 l1_ratio=0.75,
+                                 n_iter=10,
+                                 shuffle=True,
+                                 verbose=True,
+                                 n_jobs=4,
+                                 average=False
+                                 ),
+                   tuned_parameters,
+                   cv=10,
+                   scoring='f1_weighted'
+                   )
+clf.fit(X_train, Y_train)
+pred = clf.predict(X_eval)
+is_correct = (pred == Y_eval)
+print sum(is_correct)/(len((pred))*1.0)
+print clf.best_params_
+
+
+test_data['PREDICT'] = pred
+test_data['IS_CORRECT'] = is_correct
+
+result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/tfidf/result/' \
+              'tfidf_result.csv'
+
+test_data[[u'﻿ID', 'TARGET', 'TEXT', 'STANCE', 'IS_CORRECT', 'PREDICT']].to_csv(
+    result_path,
+    sep='\t',
+    index=None,
+    encoding='utf8'
+)
