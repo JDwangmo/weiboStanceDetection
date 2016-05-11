@@ -12,5 +12,6 @@ vector_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/word2vec/m
 model = Word2Vec.load_word2vec_format(vector_file_path ,binary=True)
 print model.most_similar([u'热情'])
 print ','.join([item for item,_ in model.most_similar([u'热情'])])
+print ','.join([item for item,_ in model.most_similar([u'土狗'])])
 
 

@@ -447,7 +447,7 @@ def main_processing_dataB():
     :return:
     '''
     train_dataB_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                            'evasampledata4-TaskAR.txt'
+                            'evasampledata4-TaskAA.txt'
     train_dataB = pd.read_csv(train_dataB_file_path,
                               sep='\t',
                               header=0)
@@ -471,7 +471,7 @@ def main_processing_dataB():
                                       )
 
     dataB_result_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                            'dataB_%dlen.csv' % (MAX_SENTENCE_LENGTH)
+                            'dataA_%dlen.csv' % (MAX_SENTENCE_LENGTH)
 
 
     logging.debug('将data集保存到：%s' % (dataB_result_path))
@@ -483,5 +483,5 @@ def main_processing_dataB():
 
 if __name__ =='__main__':
 
-    main_processing_dataA()
-    # main_processing_dataB()
+    # main_processing_dataA()
+    main_processing_dataB()

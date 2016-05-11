@@ -84,7 +84,7 @@ def load_data_segment(file_path):
                        header=0
                        )
     str_to_array = lambda x : x.split(',')
-    segment_sentences = data['SEGMENT_SENTENCES'].apply(str_to_array)
+    segment_sentences = data['SEGMENT_TEXT'].apply(str_to_array)
     X = segment_sentences.as_matrix()
     logging.debug((u'segment sentences的shape为：(%s,)'%(X.shape)))
 
