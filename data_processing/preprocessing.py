@@ -483,5 +483,5 @@ def main_processing_dataB():
 
 if __name__ =='__main__':
 
-    # main_processing_dataA()
-    main_processing_dataB()
+    main_processing_dataA()
+    # main_processing_dataB()
