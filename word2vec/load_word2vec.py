@@ -7,10 +7,10 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 # size = 50
 
 vector_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/word2vec/model/' \
-                   'weibodata_vector.gem'
+                   'weibo_50size.gem'
 
 model = Word2Vec.load(vector_file_path)
-word = u'手机'
+word = u'DIGITTAG'
 print model.most_similar([word])
 print ','.join([item for item,_ in model.most_similar([word])])
 # print ','.join([item for item,_ in model.most_similar([word])])
