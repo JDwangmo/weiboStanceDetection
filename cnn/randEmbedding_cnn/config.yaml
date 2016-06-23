@@ -3,7 +3,7 @@ date: &date '20160623'
 
 #------------------------------------- RandEmbeddingCNN ----------------------------------------------
 RandEmbeddingCNN:
-    path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/RandEmbeddingCNN.py
+    path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/randEmbedding_cnn_model.py
   
     # 描述
     describe: 
