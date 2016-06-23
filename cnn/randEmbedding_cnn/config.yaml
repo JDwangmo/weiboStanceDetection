@@ -1,0 +1,17 @@
+project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/
+date: &date '20160623'
+
+#------------------------------------- RandEmbeddingCNN ----------------------------------------------
+RandEmbeddingCNN:
+    path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/RandEmbeddingCNN.py
+  
+    # 描述
+    describe: 
+
+    name: &name RandEmbeddingCNN
+  
+    verbose: 1
+
+    log_file_path: [*project_path,'/log/',*date,'_',*name,'.log']
+  
+    result_file_path: [*project_path,'/result/',*date,'_',*name,'.csv']
