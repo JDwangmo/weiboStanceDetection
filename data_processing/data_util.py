@@ -137,6 +137,8 @@ class DataUtil(object):
         # print test_data
         return dev_data, test_data
 
+
+
 if __name__ == '__main__':
     train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                             'evasampledata4-TaskAA.txt'
@@ -152,7 +154,11 @@ if __name__ == '__main__':
     # print train_data.head()
     # 分词
     data['WORDS'] = data['TEXT'].apply(data_util.segment_sentence)
-    # print data.head()
+    # 统计句子的长度,按词(分完词)统计
+    data['LENGTH'] = data['WORDS'].apply(lambda x:len(x.split()))
+    # 句子长度情况
+    print data['LENGTH'].value_counts().sort_index()
+    print data.head()
     # print data['WORDS'][:5]
 
     # 将数据随机切割成训练集和测试集
@@ -161,9 +167,9 @@ if __name__ == '__main__':
     print train_data.shape
     print test_data.shape
     data_util.data_detail(test_data)
-    print train_data['TARGET'].value_counts()
-    print test_data['TARGET'].value_counts()
-    print data['TARGET'].value_counts()
+    # print train_data['TARGET'].value_counts()
+    # print test_data['TARGET'].value_counts()
+    # print data['TARGET'].value_counts()
     # 保存数据
     data_util.save_data(data, 'result/all_data_2986.csv')
     data_util.save_data(train_data, 'result/train_data_2090.csv')
