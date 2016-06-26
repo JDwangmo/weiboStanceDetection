@@ -36,3 +36,10 @@
     
 - cnn: 卷积伸进网络分类器
     - randEmbedding_cnn: CNN-rand模型
+    
+    
+
+###相关论文:
+- ######1、[Sentiment Analysis: Detecting Valence, Emotions, and Other Affectual States  from Text.pdf](https://raw.githubusercontent.com/JDwangmo/weiboStanceDetection/master/reference/Sentiment-Analysis:Detecting-Valence,Emotions,and-Other-Affectual-States-from-Text.pdf)
+        - Sergio Roa, Fernando Nino. FLAIRS 2003.
+        - keywords: RNN
