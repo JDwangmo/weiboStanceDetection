@@ -16,7 +16,7 @@ train_data = data_util.load_data('/home/jdwang/PycharmProjects/weiboStanceDetect
 test_data = data_util.load_data('/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_896.csv')
 
 model_file = '/home/jdwang/PycharmProjects/nlp_util/deep_learning/cnn/randEmbedding_cnn/model/' \
-             'model_2000epcho.pkl'
+             'model_2000epcho_2rd.pkl'
 
 
 # quit()
