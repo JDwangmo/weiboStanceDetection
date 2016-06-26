@@ -57,7 +57,8 @@ rand_embedding_cnn = RandEmbeddingCNN(
                         [100,8,word_embedding_dim,'valid'],
                         # [100,10,word_embedding_dim,'valid'],
                         ],
-    dropout_rate = 0.5,
+    input_dropout_rate=0.5,
+    output_dropout_rate=0.5,
     nb_epoch=2000,
     earlyStoping_patience = 50,
 )
