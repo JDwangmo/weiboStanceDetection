@@ -1,1 +1,5 @@
 word2vec/model
+
+# pickle 模型文件
+*.pkl
+*.pickle
