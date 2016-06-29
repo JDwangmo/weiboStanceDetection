@@ -85,8 +85,6 @@ feature_encoder = FeatureEncoder(train_data=train_X,
                                  )
 feature_encoder.print_sentence_length_detail()
 feature_encoder.print_model_descibe()
-# print feature_encoder.segment_sentence(train_X[0])
-# print train_X[0]
 
 # -------------- code start : 结束 -------------
 if verbose > 2 :
