@@ -2,15 +2,43 @@ project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cn
 date: &date '20160623'
 
 #------------------------------------- RandEmbeddingCNN ----------------------------------------------
-RandEmbeddingCNN:
+randEmbedding_cnn:
     path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/randEmbedding_cnn.py
   
     # 描述
     describe: 
 
     name: &name RandEmbeddingCNN
-  
+
+    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_2090.csv
+    test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_896.csv
+
+    refresh_all_model: True
+
     verbose: 1
+
+    sentence_padding_length: 150
+    word_embedding_dim: &word_embedding_dim 300
+
+    conv_filter_type: [
+                        [100,2,*word_embedding_dim,'valid'],
+                        [100,4,*word_embedding_dim,'valid'],
+                        # [100,6,*word_embedding_dim,'valid'],
+                        [100,8,*word_embedding_dim,'valid'],
+                        # [100,10,*word_embedding_dim,'valid'],
+                      ]
+    kmax_k: 1
+
+    cnn_nb_epoch: &cnn_nb_epoch '1'
+
+    earlyStoping_patience: 50
+
+    embedding_dropout_rate: 0.5
+
+    output_dropout_rate: 0.5
+
+    model_file_path: &model_file_path [*project_path,'/model/',*date,'_',*name,'_',*word_embedding_dim,'dim_',*cnn_nb_epoch,'epoch.pkl']
+
 
     log_file_path: [*project_path,'/log/',*date,'_',*name,'.log']
   

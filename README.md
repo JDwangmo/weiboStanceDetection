@@ -35,7 +35,7 @@
     - preprocessing.py: 已过时.
     
 - cnn: 卷积伸进网络分类器
-    - randEmbedding_cnn: CNN-rand模型
+    - randEmbedding_cnn: CNN-rand模型,具体见：https://github.com/JDwangmo/coprocessor#randomembedding_padding_cnn
     
     
 
