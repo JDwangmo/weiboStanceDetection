@@ -1,4 +1,4 @@
-project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/
+project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn
 date: &date '20160623'
 
 #------------------------------------- RandEmbeddingCNN ----------------------------------------------
