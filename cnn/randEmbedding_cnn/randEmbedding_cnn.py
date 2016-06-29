@@ -1,4 +1,7 @@
 #encoding=utf8
+"""
+    微博立场分析baseline，使用CNN-rand模型，具体见
+"""
 __author__ = 'jdwang'
 __date__ = 'create date: 2016-06-23'
 __email__ = '383287471@qq.com'
