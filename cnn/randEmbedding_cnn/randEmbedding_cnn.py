@@ -32,10 +32,9 @@ logging.debug('start running!')
 logging.debug('='*20)
 
 from deep_learning.cnn.randEmbedding_cnn.randEmbedding_cnn_model import RandEmbeddingCNN
-from deep_learning.cnn.randEmbedding_cnn.feature_encoder import FeatureEncoder
+from data_processing_util.feature_encoder.onehot_feature_encoder import FeatureEncoder
 from data_processing.data_util import DataUtil
 import os
-
 
 
 # -------------- region start : 1. 加载训练集和测试集 -------------
@@ -81,6 +80,7 @@ feature_encoder = FeatureEncoder(train_data=train_X,
                                  verbose=0,
                                  need_segmented=True,
                                  full_mode=True,
+                                 replace_number=True,
                                  remove_stopword=True,
                                  )
 feature_encoder.print_sentence_length_detail()
@@ -104,7 +104,7 @@ model_file_path = ''.join([str(item) for item in config['model_file_path']])
 
 word_embedding_dim = config['word_embedding_dim']
 rand_embedding_cnn = RandEmbeddingCNN(
-    # rand_seed=1337,
+    rand_seed=1337,
     verbose=verbose,
     input_dim=feature_encoder.train_data_dict_size+1,
     word_embedding_dim=word_embedding_dim,

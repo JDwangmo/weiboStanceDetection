@@ -29,7 +29,7 @@ randEmbedding_cnn:
                       ]
     kmax_k: 1
 
-    cnn_nb_epoch: &cnn_nb_epoch '100'
+    cnn_nb_epoch: &cnn_nb_epoch '30'
 
     earlyStoping_patience: 50
 
