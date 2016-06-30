@@ -55,7 +55,7 @@
             - 'input_dim': 14476,
             - 'input_length': 150,
             - 'kmaxpooling_k': 1,
-            - 'nb_epoch': 30,
+            - 'nb_epoch': 20,
             - 'num_labels': 3,
             - 'output_dropout_rate': 0.5,
             - 'rand_seed': 1337,

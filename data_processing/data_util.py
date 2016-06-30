@@ -6,14 +6,25 @@ import numpy as np
 import pandas as pd
 import logging
 import timeit
+from sklearn.feature_extraction.text import CountVectorizer
+
 
 from data_processing_util.jiebanlp.jieba_util import Jieba_Util
 
 class DataUtil(object):
+    '''
+        微博立场分析数据处理工具类，包含以下函数：
+            1. load_data：加载csv格式的数据
+            2. save_data：保存csv格式的数据
+            3. print_data_detail： 打印数据详情
+            4. processing_na_value：处理空值数据
+            5. segment_sentence：分词
+            6. split_train_test：切分训练集和测试集
+            7.
+    '''
     def __init__(self):
         # 初始化jieba工具
         self.jieba_util = Jieba_Util()
-        pass
 
     def load_data(self,path):
         '''
@@ -41,7 +52,7 @@ class DataUtil(object):
                            encoding='utf8',
                            )
 
-    def data_detail(self,data, has_stance=True):
+    def print_data_detail(self, data, has_stance=True):
         '''
             展示数据的详细信息
         :param data: Dateframe对象
@@ -109,9 +120,11 @@ class DataUtil(object):
     def segment_sentence(self,sentence):
         segmented_sentence = self.jieba_util.seg(sentence=sentence,
                                                  sep=' ',
-                                                 full_mode=False,
+                                                 full_mode=True,
                                                  remove_stopword=True,
-                                                 replace_number=False)
+                                                 replace_number=True,
+                                                 lowercase = True,
+                                                 )
         return segmented_sentence
 
     def split_train_test(self,data, train_split=0.7):
@@ -138,35 +151,107 @@ class DataUtil(object):
         return dev_data, test_data
 
 
+    def count_word_freq(self,data):
+        '''
+            统计每个词 在各个类别中的次数
+        :param data:
+        :return:
+        '''
+        vectorizer = CountVectorizer(analyzer="word",
+                                     encoding='utf8',
+                                     token_pattern=u'(?u)\\b\w+\\b',
+                                     tokenizer=None,
+                                     preprocessor=None,
+                                     lowercase=False,
+                                     stop_words=None,
+                                     max_features=100000)
+        train_X_features = vectorizer.fit_transform(data['WORDS']).toarray()
+        to_onehot = lambda x: np.asarray([item > 0 for item in x],dtype=int)
+        train_X_features = np.asarray([to_onehot(item) for item in train_X_features])
+        vocabulary = vectorizer.get_feature_names()
 
-if __name__ == '__main__':
+        freq = np.sum(train_X_features,axis=0)
+        favor_freq = np.sum(train_X_features[data['STANCE'].as_matrix()==u'FAVOR'],axis=0)
+        against_freq = np.sum(train_X_features[data['STANCE'].as_matrix()==u'AGAINST'],axis=0)
+        none_freq = np.sum(train_X_features[data['STANCE'].as_matrix()==u'NONE'],axis=0)
+        def get_support(word,x,y,z):
+            value = np.asarray([x, y, z])
+            sorted_index = np.argsort(value)
+            max_value = value[sorted_index[-1]]
+            # other_value = sum(value[:-1])
+            return max_value/(1.0*sum(value))
+
+        support = np.nan_to_num([get_support(word,favor,against,none) for word,favor,against,none in zip(vocabulary,favor_freq,against_freq,none_freq)])
+        print freq
+        print favor_freq
+        print against_freq
+        print none_freq
+        count_data = pd.DataFrame(data={
+            u'WORD':vocabulary,
+            u'FAVOR':favor_freq,
+            u'AGAINST':against_freq,
+            u'NONE':none_freq,
+            u'SUPPORT':support,
+            u'FREQ':freq,
+        })
+        count_data = count_data.sort_values(by=[u'SUPPORT',u'FREQ'],ascending=False)
+        count_data = count_data[[u'WORD',u'FAVOR',u'AGAINST',u'NONE',u'FREQ',u'SUPPORT']]
+        count_data.to_csv('result/word_count.csv',
+                          sep='\t',
+                          index=False,
+                          header=True,
+                          encoding='utf8',
+                          )
+        print count_data.head()
+
+
+
+        quit()
+
+def preprocess_main():
+    '''
+        数据预处理主流程
+    :return:
+    '''
+
+
+
+
     train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                             'evasampledata4-TaskAA.txt'
+
     data_util = DataUtil()
+    data = data_util.load_data('/home/jdwang/PycharmProjects/weiboStanceDetection/data_processing/result/word_count.csv')
+    print data.shape
+    print sum((data['SUPPORT'] > 0.8).as_matrix() * (data['FREQ'] > 5).as_matrix())
+    quit()
     data = data_util.load_data(train_dataA_file_path)
-    data_util.data_detail(data, has_stance=True)
+    data_util.print_data_detail(data, has_stance=True)
 
     print data.shape
     # 将有空数值的数据去除
     data = data_util.processing_na_value(data, clear_na=True)
 
     print data.shape
-    # print train_data.head()
+    print data.head()
     # 分词
     data['WORDS'] = data['TEXT'].apply(data_util.segment_sentence)
+
+    data_util.count_word_freq(data)
+
     # 统计句子的长度,按词(分完词)统计
-    data['LENGTH'] = data['WORDS'].apply(lambda x:len(x.split()))
+    data['LENGTH'] = data['WORDS'].apply(lambda x: len(x.split()))
     # 句子长度情况
     print data['LENGTH'].value_counts().sort_index()
     print data.head()
     # print data['WORDS'][:5]
 
     # 将数据随机切割成训练集和测试集
-    train_data,test_data = data_util.split_train_test(data,train_split=0.7)
+    train_data, test_data = data_util.split_train_test(data, train_split=0.7)
 
     print train_data.shape
     print test_data.shape
-    data_util.data_detail(test_data)
+    data_util.print_data_detail(test_data)
     # print train_data['TARGET'].value_counts()
     # print test_data['TARGET'].value_counts()
     # print data['TARGET'].value_counts()
@@ -174,6 +259,15 @@ if __name__ == '__main__':
     data_util.save_data(data, 'result/all_data_2986.csv')
     data_util.save_data(train_data, 'result/train_data_2090.csv')
     data_util.save_data(test_data, 'result/test_data_896.csv')
+
+
+
+
+if __name__ == '__main__':
+    preprocess_main()
+
+
+
 
 
 

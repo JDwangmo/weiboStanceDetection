@@ -82,6 +82,7 @@ feature_encoder = FeatureEncoder(train_data=train_X,
                                  full_mode=True,
                                  replace_number=True,
                                  remove_stopword=True,
+                                 lowercase=True,
                                  )
 feature_encoder.print_sentence_length_detail()
 feature_encoder.print_model_descibe()

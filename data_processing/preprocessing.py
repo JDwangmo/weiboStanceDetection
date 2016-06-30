@@ -394,7 +394,7 @@ def main_processing_dataA():
                               sep='\t',
                               header=0)
     logging.debug('show the detail of task A')
-    # data_detail(train_dataA)
+    # print_data_detail(train_dataA)
     # 过滤字符和分词
     train_dataA = clean_data(train_dataA,
                              columns=['TEXT'],
