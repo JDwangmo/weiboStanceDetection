@@ -1,5 +1,5 @@
 # Weibo Stance Detection
-### 微博立场分析
+### [微博立场分析](http://tcci.ccf.org.cn/conference/2016/pages/page05_evadata.html)
 
 
 ### 实验数据
@@ -116,6 +116,7 @@
              'verbose': 1,
              'word_embedding_dim': 50}
             - 
+            
             |句子长度| 词向量长度  | 迭代次数/earlyStop/实际  |训练集结果 | 测试集结果 |结果文件名|运行时间|
             |---|---|---|---|---|---|---|
             |93| 50 | 100/50/100 | \*(\*%) |479(53.4598%)|\*.csv|8880s|

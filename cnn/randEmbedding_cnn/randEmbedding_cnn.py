@@ -45,14 +45,14 @@ if verbose > 2:
     logging.debug('1. 加载训练集和测试集')
     print '1. 加载训练集和测试集'
 # -------------- code start : 开始 -------------
-
-logging.debug(config['train_data_filte_path'])
-print config['train_data_filte_path']
+train_data_file_path = (config['train_data_filte_path'])%config['train_data_type']
+logging.debug(train_data_file_path)
+print train_data_file_path
 logging.debug(config['test_data_filte_path'])
 print config['test_data_filte_path']
 
 data_util = DataUtil()
-train_data = data_util.load_data(config['train_data_filte_path'])
+train_data = data_util.load_data(train_data_file_path)
 test_data = data_util.load_data(config['test_data_filte_path'])
 
 
@@ -83,7 +83,7 @@ test_y = test_data['STANCE'].map(label_to_index).as_matrix()
 feature_encoder = FeatureEncoder(train_data=train_X,
                                  sentence_padding_length=config['sentence_padding_length'],
                                  verbose=0,
-                                 need_segmented=True,
+                                 need_segmented=config['need_segmented'],
                                  full_mode=True,
                                  replace_number=True,
                                  remove_stopword=True,
@@ -160,12 +160,13 @@ if verbose > 1:
 
 print index_to_label[rand_embedding_cnn.predict(feature_encoder.encoding_sentence('你好吗'))]
 
-y_pred, is_correct, accu = rand_embedding_cnn.accuracy((map(feature_encoder.encoding_sentence, test_X), test_y))
-
+y_pred, is_correct, accu,f1 = rand_embedding_cnn.accuracy((map(feature_encoder.encoding_sentence, test_X), test_y))
+logging.debug('F1(macro)为：%f'%(np.average(f1[:-1])))
+print 'F1(macro)为：%f'%(np.average(f1[:-1]))
 test_data[u'IS_CORRECT'] = is_correct
 test_data[u'PREDICT'] = [index_to_label[item] for item in y_pred]
-data_util.save_data(test_data,'tmp.tmp')
-quit()
+# data_util.save_data(test_data,'tmp.tmp')
+# quit()
 result_file_path = ''.join(config['result_file_path'])
 
 data_util.save_data(test_data,

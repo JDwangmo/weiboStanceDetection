@@ -122,9 +122,9 @@ def process_2gram(candiate_words,rest_words):
                       )
 
 def test():
-    test_data = data_util.load_data('/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_896.csv')
+    test_data = data_util.load_data('/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/all_data_half_2986.csv')
     test_data['WORDS'] = test_data['TEXT'].apply(data_util.segment_sentence)
-    data_util.save_data(test_data,'/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_896.csv')
+    data_util.save_data(test_data,'/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/all_data_half_2986.csv')
     quit()
     for item in test_data['TEXT'].apply(data_util.segment_sentence).as_matrix():
         seg = item.split()
@@ -135,9 +135,9 @@ def test():
     print test_data
 
 if __name__ == '__main__':
-    # test()
-    candiate_words,keywords,rest_words = process_1gram()
-    process_2gram(candiate_words,rest_words)
+    test()
+    # candiate_words,keywords,rest_words = process_1gram()
+    # process_2gram(candiate_words,rest_words)
     # data_util.save_data(keywords,selected_keywords_file_path)
 
 #

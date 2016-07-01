@@ -10,17 +10,22 @@ randEmbedding_cnn:
 
     name: &name RandEmbeddingCNN
 
-    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_2090.csv
+    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_%s_2090.csv
 #    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_half_2090.csv
 #    test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_896.csv
     test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_half_896.csv
+
+    train_data_type: &train_data_type full
 
     refresh_all_model: True
 
     verbose: 1
 
+    need_segmented: True
+
     sentence_padding_length: &sentence_padding_length 93
     word_embedding_dim: &word_embedding_dim 50
+
 
     conv_filter_type: [
                         [100,2,*word_embedding_dim,'valid'],
@@ -31,7 +36,7 @@ randEmbedding_cnn:
                       ]
     kmax_k: 1
 
-    cnn_nb_epoch: &cnn_nb_epoch '200'
+    cnn_nb_epoch: &cnn_nb_epoch '2'
 
     earlyStoping_patience: 50
 
@@ -39,7 +44,7 @@ randEmbedding_cnn:
 
     output_dropout_rate: 0.5
 
-    model_file_path: &model_file_path [*project_path,'/model/',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*cnn_nb_epoch,'epoch.pkl']
+    model_file_path: &model_file_path [*project_path,'/model/',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*train_data_type,'train_',*cnn_nb_epoch,'epoch.pkl']
 
 
     log_file_path: [*project_path,'/log/',*date,'_',*name,'.log']
