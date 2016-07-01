@@ -26,17 +26,24 @@ class DataUtil(object):
         # 初始化jieba工具
         self.jieba_util = Jieba_Util()
 
-    def load_data(self,path):
+    def load_data(self,path,header=True):
         '''
             读取数据
         :param path: 数据文件的路径
         :return:
         '''
-        data = pd.read_csv(path,
-                           sep='\t',
-                           header=0,
-                           encoding='utf8',
-                           )
+        if header:
+            data = pd.read_csv(path,
+                               sep='\t',
+                               header=0,
+                               encoding='utf8',
+                               )
+        else:
+            data = pd.read_csv(path,
+                               sep='\t',
+                               header=None,
+                               encoding='utf8',
+                               )
         return data
 
     def save_data(self,data,path):
@@ -45,12 +52,12 @@ class DataUtil(object):
         :param path: 数据文件的路径
         :return:
         '''
-        data = data.to_csv(path,
-                           sep='\t',
-                           header=True,
-                           index=False,
-                           encoding='utf8',
-                           )
+        data.to_csv(path,
+                    sep='\t',
+                    header=True,
+                    index=False,
+                    encoding='utf8',
+                    )
 
     def print_data_detail(self, data, has_stance=True):
         '''
@@ -124,6 +131,8 @@ class DataUtil(object):
                                                  remove_stopword=True,
                                                  replace_number=True,
                                                  lowercase = True,
+                                                 zhs2zht=True,
+                                                 remove_url=True,
                                                  )
         return segmented_sentence
 
@@ -153,35 +162,52 @@ class DataUtil(object):
 
     def count_word_freq(self,data):
         '''
-            统计每个词 在各个类别中的次数
+            统计每个词 在各个类别中的次数,每个词有四个统计项：
+                1. FAVOR：	在favor类别中的出现的次数
+                2. AGAINST：在AGAINST类别中的出现的次数
+                3. NONE	： 在NONE类别中的出现的次数
+                4. FREQ	： 在所有类别中的出现的次数，即FAVOR+AGAINST+NONE
+                5. SUPPORT： 最高词频词频项/（FREQ）
+
         :param data:
         :return:
         '''
-        vectorizer = CountVectorizer(analyzer="word",
-                                     encoding='utf8',
-                                     token_pattern=u'(?u)\\b\w+\\b',
-                                     tokenizer=None,
-                                     preprocessor=None,
-                                     lowercase=False,
-                                     stop_words=None,
-                                     max_features=100000)
-        train_X_features = vectorizer.fit_transform(data['WORDS']).toarray()
-        to_onehot = lambda x: np.asarray([item > 0 for item in x],dtype=int)
-        train_X_features = np.asarray([to_onehot(item) for item in train_X_features])
-        vocabulary = vectorizer.get_feature_names()
+        from data_processing_util.feature_encoder.onehot_feature_encoder import FeatureEncoder
+
+        feature_encoder = FeatureEncoder(train_data=data['WORDS'].as_matrix(),
+                                         verbose=0,
+                                         padding_mode='none',
+                                         need_segmented=True,
+                                         full_mode=True,
+                                         remove_stopword=True,
+                                         replace_number=True,
+                                         lowercase=True,
+                                         remove_url=True,
+                                         sentence_padding_length=7,
+                                         add_unkown_word=False,
+                                         mask_zero=False,
+                                         zhs2zht=True,
+                                         )
+
+        # print feature_encoder.train_padding_index
+        train_X_features = feature_encoder.to_onehot_array()
+
+        # np.save('train_X_feature',train_X_features)
+
+        print train_X_features.shape
+        print train_X_features[:5]
+        vocabulary = feature_encoder.vocabulary
+        print feature_encoder.train_data_dict_size
+        np.save('temp',vocabulary)
 
         freq = np.sum(train_X_features,axis=0)
         favor_freq = np.sum(train_X_features[data['STANCE'].as_matrix()==u'FAVOR'],axis=0)
         against_freq = np.sum(train_X_features[data['STANCE'].as_matrix()==u'AGAINST'],axis=0)
         none_freq = np.sum(train_X_features[data['STANCE'].as_matrix()==u'NONE'],axis=0)
-        def get_support(word,x,y,z):
-            value = np.asarray([x, y, z])
-            sorted_index = np.argsort(value)
-            max_value = value[sorted_index[-1]]
-            # other_value = sum(value[:-1])
-            return max_value/(1.0*sum(value))
 
-        support = np.nan_to_num([get_support(word,favor,against,none) for word,favor,against,none in zip(vocabulary,favor_freq,against_freq,none_freq)])
+
+
+        support = np.nan_to_num([max(favor,against,none)/(1.0*(favor+against+none)) for favor,against,none in zip(favor_freq,against_freq,none_freq)])
         print freq
         print favor_freq
         print against_freq
@@ -194,7 +220,7 @@ class DataUtil(object):
             u'SUPPORT':support,
             u'FREQ':freq,
         })
-        count_data = count_data.sort_values(by=[u'SUPPORT',u'FREQ'],ascending=False)
+        count_data = count_data.sort_values(by=[u'SUPPORT',u'FREQ','WORD'],ascending=False)
         count_data = count_data[[u'WORD',u'FAVOR',u'AGAINST',u'NONE',u'FREQ',u'SUPPORT']]
         count_data.to_csv('result/word_count.csv',
                           sep='\t',
@@ -205,26 +231,17 @@ class DataUtil(object):
         print count_data.head()
 
 
-
-        quit()
-
 def preprocess_main():
     '''
         数据预处理主流程
     :return:
     '''
 
-
-
-
     train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
                             'evasampledata4-TaskAA.txt'
 
     data_util = DataUtil()
-    data = data_util.load_data('/home/jdwang/PycharmProjects/weiboStanceDetection/data_processing/result/word_count.csv')
-    print data.shape
-    print sum((data['SUPPORT'] > 0.8).as_matrix() * (data['FREQ'] > 5).as_matrix())
-    quit()
+
     data = data_util.load_data(train_dataA_file_path)
     data_util.print_data_detail(data, has_stance=True)
 
@@ -232,13 +249,12 @@ def preprocess_main():
     # 将有空数值的数据去除
     data = data_util.processing_na_value(data, clear_na=True)
 
-    print data.shape
-    print data.head()
     # 分词
     data['WORDS'] = data['TEXT'].apply(data_util.segment_sentence)
 
+    # 对所有数据，统计词频，并生成文件
     data_util.count_word_freq(data)
-
+    quit()
     # 统计句子的长度,按词(分完词)统计
     data['LENGTH'] = data['WORDS'].apply(lambda x: len(x.split()))
     # 句子长度情况
@@ -247,6 +263,7 @@ def preprocess_main():
     # print data['WORDS'][:5]
 
     # 将数据随机切割成训练集和测试集
+
     train_data, test_data = data_util.split_train_test(data, train_split=0.7)
 
     print train_data.shape
