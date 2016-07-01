@@ -1,23 +1,25 @@
-2016-06-30 09:28:11,920 : DEBUG : ==============================
-2016-06-30 09:28:11,920 : DEBUG : None
-2016-06-30 09:28:11,920 : DEBUG : ==============================
-2016-06-30 09:28:11,920 : DEBUG : start running!
-2016-06-30 09:28:11,920 : DEBUG : ====================
-2016-06-30 09:28:12,130 : INFO : Pattern library is not installed, lemmatization won't be available.
-2016-06-30 09:28:12,240 : DEBUG : Fast version of gensim.models.word2vec is being used
-2016-06-30 09:28:12,241 : DEBUG : Fast version of gensim.models.doc2vec is being used
-2016-06-30 09:28:12,244 : INFO : 'pattern' package not found; tag filters are not available for English
-2016-06-30 09:28:13,088 : DEBUG : Building prefix dict from the default dictionary ...
-2016-06-30 09:28:13,089 : DEBUG : Loading model from cache /tmp/jieba.cache
-2016-06-30 09:28:13,328 : DEBUG : Loading model cost 0.240 seconds.
-2016-06-30 09:28:13,329 : DEBUG : Prefix dict has been built succesfully.
-2016-06-30 09:28:13,427 : DEBUG : ====================
-2016-06-30 09:28:27,996 : DEBUG : ====================
-2016-06-30 09:28:27,996 : DEBUG : 首先,构建训练库字典,然后将每个词映射到一个索引,再将所有句子映射成索引的列表
-2016-06-30 09:28:28,007 : INFO : adding document #0 to Dictionary(0 unique tokens: [])
-2016-06-30 09:28:28,138 : INFO : built Dictionary(14406 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2090 documents (total 93960 corpus positions)
-2016-06-30 09:28:28,138 : INFO : adding document #0 to Dictionary(14406 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...)
-2016-06-30 09:28:28,139 : INFO : built Dictionary(14407 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2091 documents (total 93961 corpus positions)
-2016-06-30 09:28:44,406 : DEBUG : {'verbose': 0, 'replace_number': True, 'remove_stopword': True, 'train_data_count': 2090, 'need_segmented': True, 'sentence_padding_length': 150, 'full_mode': True}
-2016-06-30 09:28:45,435 : DEBUG : {'earlyStoping_patience': 50, 'verbose': 1, 'rand_seed': 1337, 'embedding_dropout_rate': 0.5, 'num_labels': 3, 'nb_epoch': 30, 'output_dropout_rate': 0.5, 'input_dim': 14408, 'word_embedding_dim': 300, 'kmaxpooling_k': 1, 'conv_filter_type': [[100, 2, 300, 'valid'], [100, 4, 300, 'valid'], [100, 8, 300, 'valid']], 'input_length': 150}
-2016-06-30 09:28:51,950 : DEBUG : --------------------
+2016-07-01 17:42:37,911 : DEBUG : ==============================
+2016-07-01 17:42:37,911 : DEBUG : None
+2016-07-01 17:42:37,911 : DEBUG : ==============================
+2016-07-01 17:42:37,911 : DEBUG : start running!
+2016-07-01 17:42:37,911 : DEBUG : ====================
+2016-07-01 17:42:38,172 : INFO : Pattern library is not installed, lemmatization won't be available.
+2016-07-01 17:42:38,333 : DEBUG : Fast version of gensim.models.word2vec is being used
+2016-07-01 17:42:38,335 : DEBUG : Fast version of gensim.models.doc2vec is being used
+2016-07-01 17:42:38,340 : INFO : 'pattern' package not found; tag filters are not available for English
+2016-07-01 17:42:38,962 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_2090.csv
+2016-07-01 17:42:38,963 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_half_896.csv
+2016-07-01 17:42:38,963 : DEBUG : Building prefix dict from the default dictionary ...
+2016-07-01 17:42:38,963 : DEBUG : Loading model from cache /tmp/jieba.cache
+2016-07-01 17:42:39,149 : DEBUG : Loading model cost 0.186 seconds.
+2016-07-01 17:42:39,149 : DEBUG : Prefix dict has been built succesfully.
+2016-07-01 17:42:39,307 : DEBUG : ====================
+2016-07-01 17:42:54,044 : DEBUG : ====================
+2016-07-01 17:42:54,044 : DEBUG : 首先,构建训练库字典,然后将每个词映射到一个索引,再将所有句子映射成索引的列表
+2016-07-01 17:42:54,054 : INFO : adding document #0 to Dictionary(0 unique tokens: [])
+2016-07-01 17:42:54,185 : INFO : built Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2090 documents (total 93150 corpus positions)
+2016-07-01 17:42:54,185 : INFO : adding document #0 to Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...)
+2016-07-01 17:42:54,185 : INFO : built Dictionary(14110 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2091 documents (total 93151 corpus positions)
+2016-07-01 17:43:08,980 : DEBUG : {'verbose': 0, 'padding_mode': 'center', 'replace_number': True, 'train_data_dict_size': 14110, 'mask_zero': True, 'sentence_padding_length': 93, 'remove_stopword': True, 'add_unkown_word': True, 'train_data_count': 2090, 'need_segmented': True, 'full_mode': True}
+2016-07-01 17:43:10,273 : DEBUG : {'earlyStoping_patience': 50, 'verbose': 1, 'rand_seed': 1337, 'embedding_dropout_rate': 0.5, 'num_labels': 3, 'nb_epoch': 200, 'output_dropout_rate': 0.5, 'input_dim': 14111, 'word_embedding_dim': 50, 'kmaxpooling_k': 1, 'conv_filter_type': [[100, 2, 50, 'valid'], [100, 4, 50, 'valid'], [100, 8, 50, 'valid']], 'input_length': 93}
+2016-07-01 17:43:14,922 : DEBUG : --------------------
