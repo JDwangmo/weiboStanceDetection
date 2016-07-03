@@ -270,13 +270,7 @@ def preprocess_dataAA():
     print '去除其他字段有空数值的数据之后，剩下%d条句子,输出到：%s'%(len(data),output_file_path)
     # 保存数据
     data_util.save_data(data, output_file_path)
-    quit()
 
-    # 分词
-    # data['WORDS'].to_csv('result/temp.tmp',sep='\t',encoding='utf8')
-    # 对所有数据，统计词频，并生成文件
-    data_util.count_word_freq(data)
-    quit()
     # 统计句子的长度,按词(分完词)统计
     data['LENGTH'] = data['WORDS'].apply(lambda x: len(x.split()))
     # 句子长度情况
@@ -295,9 +289,9 @@ def preprocess_dataAA():
     # print test_data['TARGET'].value_counts()
     # print data['TARGET'].value_counts()
     # 保存数据
-    data_util.save_data(data, 'result/all_data_2986.csv')
-    data_util.save_data(train_data, 'result/train_data_2090.csv')
-    data_util.save_data(test_data, 'result/test_data_896.csv')
+    data_util.save_data(data, 'result/TaskAA_all_data_2986.csv')
+    data_util.save_data(train_data, 'result/TaskAA_train_data_2090.csv')
+    data_util.save_data(test_data, 'result/TaskAA_test_data_896.csv')
 
 
 def preprocess_dataAR():
