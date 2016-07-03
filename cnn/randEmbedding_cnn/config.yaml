@@ -1,9 +1,9 @@
-project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn
+project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/wordEmbedding_cnn
 date: &date '20160623'
 
 #------------------------------------- RandEmbeddingCNN ----------------------------------------------
 randEmbedding_cnn:
-    path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/randEmbedding_cnn.py
+    path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/wordEmbedding_cnn/wordEmbedding_cnn.py
   
     # 描述
     describe: 

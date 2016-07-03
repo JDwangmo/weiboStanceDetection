@@ -1,0 +1,36 @@
+2016-07-03 00:45:53,208 : DEBUG : ==============================
+2016-07-03 00:45:53,208 : DEBUG : None
+2016-07-03 00:45:53,208 : DEBUG : ==============================
+2016-07-03 00:45:53,208 : DEBUG : start running!
+2016-07-03 00:45:53,208 : DEBUG : ====================
+2016-07-03 00:45:53,774 : INFO : Pattern library is not installed, lemmatization won't be available.
+2016-07-03 00:45:54,274 : DEBUG : Fast version of gensim.models.word2vec is being used
+2016-07-03 00:45:54,277 : DEBUG : Fast version of gensim.models.doc2vec is being used
+2016-07-03 00:45:54,284 : INFO : 'pattern' package not found; tag filters are not available for English
+2016-07-03 00:45:56,340 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_full_2090.csv
+2016-07-03 00:45:56,340 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_full_896.csv
+2016-07-03 00:45:56,340 : DEBUG : Building prefix dict from the default dictionary ...
+2016-07-03 00:45:56,341 : DEBUG : Loading model from cache /tmp/jieba.cache
+2016-07-03 00:45:57,191 : DEBUG : Loading model cost 0.851 seconds.
+2016-07-03 00:45:57,192 : DEBUG : Prefix dict has been built succesfully.
+2016-07-03 00:45:57,578 : DEBUG : ====================
+2016-07-03 00:46:26,706 : DEBUG : ====================
+2016-07-03 00:46:26,706 : DEBUG : 首先,构建训练库字典,然后将每个词映射到一个索引,再将所有句子映射成索引的列表
+2016-07-03 00:46:26,722 : INFO : adding document #0 to Dictionary(0 unique tokens: [])
+2016-07-03 00:46:27,050 : INFO : built Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2090 documents (total 93150 corpus positions)
+2016-07-03 00:46:27,050 : INFO : adding document #0 to Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...)
+2016-07-03 00:46:27,050 : INFO : built Dictionary(14110 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2091 documents (total 93151 corpus positions)
+2016-07-03 00:46:54,214 : DEBUG : {'verbose': 0, 'padding_mode': 'center', 'replace_number': True, 'train_data_dict_size': 14110, 'mask_zero': True, 'sentence_padding_length': 150, 'remove_stopword': True, 'add_unkown_word': True, 'train_data_count': 2090, 'need_segmented': True, 'full_mode': True}
+2016-07-03 00:46:54,214 : INFO : loading Word2Vec object from /home/jdwang/PycharmProjects/weiboStanceDetection/data_processing/word2vec/vector/train_data_full_20963_300dim_50iter_cbow.gem
+2016-07-03 00:46:54,684 : INFO : loading syn1neg from /home/jdwang/PycharmProjects/weiboStanceDetection/data_processing/word2vec/vector/train_data_full_20963_300dim_50iter_cbow.gem.syn1neg.npy with mmap=None
+2016-07-03 00:46:55,696 : INFO : loading syn0 from /home/jdwang/PycharmProjects/weiboStanceDetection/data_processing/word2vec/vector/train_data_full_20963_300dim_50iter_cbow.gem.syn0.npy with mmap=None
+2016-07-03 00:46:55,939 : INFO : setting ignored attribute syn0norm to None
+2016-07-03 00:46:55,939 : INFO : setting ignored attribute cum_ta2016-07-03 06:09:40,905 : DEBUG : 正确的个数:467
+2016-07-03 06:09:40,918 : DEBUG : 准确率为:0.521205
+2016-07-03 06:09:40,928 : DEBUG : F1为：[ 0.59142212  0.54600302  0.19753086]
+2016-07-03 06:09:40,930 : DEBUG : F1(macro)为：0.568713
+2016-07-03 06:09:41,009 : DEBUG : ====================
+2016-07-03 06:09:41,009 : DEBUG : end! Running time:20238s!
+: DEBUG : end! Running time:19253s!
+input_length': 150}
+2016-07-03 00:47:13,048 : DEBUG : --------------------

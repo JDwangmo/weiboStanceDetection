@@ -18,7 +18,7 @@ import timeit
 import yaml
 
 config = yaml.load(file('./config.yaml'))
-config = config['randEmbedding_cnn']
+config = config['wordEmbedding_cnn']
 verbose = config['verbose']
 logging.basicConfig(filename=''.join(config['log_file_path']), filemode='w',
                     format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
@@ -33,7 +33,7 @@ logging.debug('=' * 30)
 logging.debug('start running!')
 logging.debug('=' * 20)
 
-from deep_learning.cnn.randEmbedding_cnn.randEmbedding_cnn_model import RandEmbeddingCNN
+from deep_learning.cnn.wordEmbedding_cnn.wordEmbedding_cnn_model import WordEmbeddingCNN
 from data_processing_util.feature_encoder.onehot_feature_encoder import FeatureEncoder
 from data_processing.data_util import DataUtil
 import os
@@ -116,7 +116,7 @@ if verbose > 2:
 model_file_path = ''.join([str(item) for item in config['model_file_path']])
 
 word_embedding_dim = config['word_embedding_dim']
-rand_embedding_cnn = RandEmbeddingCNN(
+rand_embedding_cnn = WordEmbeddingCNN(
     rand_seed=1337,
     verbose=verbose,
     input_dim=feature_encoder.train_data_dict_size + 1,

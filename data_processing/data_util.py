@@ -89,7 +89,7 @@ class DataUtil(object):
             count_null = sum(data[column].isnull())
             if count_null != 0:
                 logging.warn(u'%s字段有空值，个数：%d,建议使用processing_na_value()方法进一步处理！' % (column, count_null))
-                null_data_path = './null_data.csv'
+                null_data_path = './result/null_data.csv'
                 logging.warn(u'将缺失值数据输出到文件：%s' % (null_data_path))
                 data[data[column].isnull()].to_csv(null_data_path,
                                                    index=None,
@@ -177,7 +177,7 @@ class DataUtil(object):
         feature_encoder = FeatureEncoder(train_data=data['WORDS'].as_matrix(),
                                          verbose=0,
                                          padding_mode='none',
-                                         need_segmented=True,
+                                         need_segmented=False,
                                          full_mode=True,
                                          remove_stopword=True,
                                          replace_number=True,
@@ -192,13 +192,14 @@ class DataUtil(object):
         # print feature_encoder.train_padding_index
         train_X_features = feature_encoder.to_onehot_array()
 
-        # np.save('train_X_feature',train_X_features)
+        np.save('result/train_X_feature',train_X_features)
 
         print train_X_features.shape
         print train_X_features[:5]
         vocabulary = feature_encoder.vocabulary
+        print ','.join(vocabulary)
         print feature_encoder.train_data_dict_size
-        np.save('temp',vocabulary)
+        np.save('result/vocabulary',vocabulary)
 
         freq = np.sum(train_X_features,axis=0)
         favor_freq = np.sum(train_X_features[data['STANCE'].as_matrix()==u'FAVOR'],axis=0)
@@ -231,27 +232,48 @@ class DataUtil(object):
         print count_data.head()
 
 
-def preprocess_main():
+def preprocess_dataAA():
     '''
-        数据预处理主流程
+        数据 evasampledata4-TaskAA.txt 预处理主流程
     :return:
     '''
-
-    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                            'evasampledata4-TaskAA.txt'
+    # 读取数据
+    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/evasampledata4-TaskAA.txt'
 
     data_util = DataUtil()
 
     data = data_util.load_data(train_dataA_file_path)
     data_util.print_data_detail(data, has_stance=True)
+    # -------------- region start : 1. 处理空值数据 -------------
+    logging.debug('-' * 20)
+    print '-' * 20
+    logging.debug('1. 处理空值数据')
+    print '1. 处理空值数据'
 
-    print data.shape
-    # 将有空数值的数据去除
-    data = data_util.processing_na_value(data, clear_na=True)
+    print '原始数据有%d条句子'%(len(data))
+    # 将TEXT字段有空数值的数据去除，并保存
+    data = data_util.processing_na_value(data, clear_na=True,columns=[u'TEXT'])
+    print '去除TEXT字段有空数值的数据之后，剩下%d条句子'%(len(data))
+
+    logging.debug('-' * 20)
+    print '-' * 20
+    # -------------- region end : 1. 处理空值数据 ---------------
 
     # 分词
     data['WORDS'] = data['TEXT'].apply(data_util.segment_sentence)
+    # 保存数据
+    data_util.save_data(data, 'result/TaskAA_all_data_3000.csv')
 
+    # 将其他字段有空数值的数据去除
+    data = data_util.processing_na_value(data, clear_na=True)
+    output_file_path = 'result/TaskAA_all_data_%d.csv' % len(data)
+    print '去除其他字段有空数值的数据之后，剩下%d条句子,输出到：%s'%(len(data),output_file_path)
+    # 保存数据
+    data_util.save_data(data, output_file_path)
+    quit()
+
+    # 分词
+    # data['WORDS'].to_csv('result/temp.tmp',sep='\t',encoding='utf8')
     # 对所有数据，统计词频，并生成文件
     data_util.count_word_freq(data)
     quit()
@@ -278,17 +300,94 @@ def preprocess_main():
     data_util.save_data(test_data, 'result/test_data_896.csv')
 
 
+def preprocess_dataAR():
+    '''
+        数据 evasampledata4-TaskAR.txt 预处理主流程
+    :return:
+    '''
+
+    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/evasampledata4-TaskAR.txt'
+
+    data_util = DataUtil()
+
+    data = data_util.load_data(train_dataA_file_path)
+    data_util.print_data_detail(data, has_stance=False)
+    print data.shape
+
+    data_util.save_data(data, 'result/TaskAR_all_data_2997.csv')
+    # 将有空数值的数据去除
+    data = data_util.processing_na_value(data, clear_na=True)
+    logging.debug('去除空值数据后剩下%d条数据。'%len(data))
+    print '去除空值数据后剩下%d条数据。'%len(data)
+
+    # 分词
+    data['WORDS'] = data['TEXT'].apply(data_util.segment_sentence)
+    # print data.head()
+    # 检验分完词之后是否出现空值
+    count_null_data = sum(data['WORDS'].isnull())
+    logging.debug('WORDS出现空值数：%d'%count_null_data)
+    print 'WORDS出现空值数：%d'%count_null_data
+    data = data_util.processing_na_value(data, clear_na=True,columns=['WORDS'])
+    logging.debug('去除WORDS空值数据后剩下%d条数据。' % len(data))
+    print '去除WORDS空值数据后剩下%d条数据。' % len(data)
+    data_util.save_data(data, 'result/TaskAR_all_data_2997.csv')
+
+def preprocess_testA():
+    '''
+        数据 NLPCC2016_Stance_Detection_Task_A_Testdata.txt 预处理主流程
+    :return:
+    '''
+
+    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt'
+
+    data_util = DataUtil()
+
+    data = data_util.load_data(train_dataA_file_path)
+    data_util.print_data_detail(data, has_stance=False)
+    print data.shape
+    print data.head()
+    # 将有空数值的数据去除
+    data = data_util.processing_na_value(data,
+                                         clear_na=True,
+                                         columns=[u'TEXT'],
+                                         )
+    logging.debug('去除空值数据后剩下%d条数据。'%len(data))
+    print '去除空值数据后剩下%d条数据。'%len(data)
+    print '有%d个句子是已经标注'%sum(data[u'PREDICT'].notnull())
+
+    # -------------- region start : 对句子开始分词 -------------
+    logging.debug('-' * 20)
+    print '-' * 20
+    logging.debug('对句子开始分词')
+    print '对句子开始分词'
+
+    # 分词
+    data['WORDS'] = data['TEXT'].apply(data_util.segment_sentence)
+    print data.head()
+
+    # 检验分完词之后是否出现空值
+    count_null_data = sum(data['WORDS'].isnull())
+    logging.debug('WORDS出现空值数：%d' % count_null_data)
+    print 'WORDS出现空值数：%d' % count_null_data
+    # data = data_util.processing_na_value(data, clear_na=True, columns=['WORDS'])
+    # logging.debug('去除WORDS空值数据后剩下%d条数据。' % len(data))
+    # print '去除WORDS空值数据后剩下%d条数据。' % len(data)
+
+    logging.debug('-' * 20)
+    print '-' * 20
+    # -------------- region end : 对句子开始分词 ---------------
+
+
+    data_util.save_data(data, 'result/TaskA_all_testdata_15000.csv')
 
 
 if __name__ == '__main__':
-    preprocess_main()
+    # 数据 evasampledata4-TaskAA.txt 预处理主流程
+    preprocess_dataAA()
 
+    # 数据 evasampledata4-TaskAR.txt 预处理主流程
+    # preprocess_dataAR()
 
-
-
-
-
-
-
-
+    # NLPCC2016_Stance_Detection_Task_A_Testdata.txt预处理主流程
+    # preprocess_testA()
 

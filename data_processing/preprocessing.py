@@ -447,7 +447,7 @@ def main_processing_dataB():
     :return:
     '''
     train_dataB_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/' \
-                            'evasampledata4-TaskAA.txt'
+                            'evasampledata4-TaskAR.txt'
     train_dataB = pd.read_csv(train_dataB_file_path,
                               sep='\t',
                               header=0)
@@ -483,5 +483,5 @@ def main_processing_dataB():
 
 if __name__ =='__main__':
 
-    main_processing_dataA()
-    # main_processing_dataB()
+    # main_processing_dataA()
+    main_processing_dataB()
