@@ -1,0 +1,24 @@
+2016-07-03 23:04:51,592 : DEBUG : ==============================
+2016-07-03 23:04:51,593 : DEBUG : None
+2016-07-03 23:04:51,593 : DEBUG : ==============================
+2016-07-03 23:04:51,593 : DEBUG : start running!
+2016-07-03 23:04:51,593 : DEBUG : ====================
+2016-07-03 23:04:51,824 : INFO : Pattern library is not installed, lemmatization won't be available.
+2016-07-03 23:04:51,908 : DEBUG : Fast version of gensim.models.word2vec is being used
+2016-07-03 23:04:51,909 : DEBUG : Fast version of gensim.models.doc2vec is being used
+2016-07-03 23:04:51,912 : INFO : 'pattern' package not found; tag filters are not available for English
+2016-07-03 23:04:52,789 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_full_2090.csv
+2016-07-03 23:04:52,789 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_full_896.csv
+2016-07-03 23:04:52,789 : DEBUG : Building prefix dict from the default dictionary ...
+2016-07-03 23:04:52,789 : DEBUG : Loading model from cache /tmp/jieba.cache
+2016-07-03 23:04:53,014 : DEBUG : Loading model cost 0.225 seconds.
+2016-07-03 23:04:53,015 : DEBUG : Prefix dict has been built succesfully.
+2016-07-03 23:04:53,150 : DEBUG : ====================
+2016-07-03 23:05:09,116 : DEBUG : ====================
+2016-07-03 23:05:09,117 : DEBUG : 首先,构建训练库字典,然后将每个词映射到一个索引,再将所有句子映射成索引的列表
+2016-07-03 23:05:09,126 : INFO : adding document #0 to Dictionary(0 unique tokens: [])
+2016-07-03 23:05:09,272 : INFO : built Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2090 documents (total 93150 corpus positions)
+2016-07-03 23:05:09,272 : INFO : adding document #0 to Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...)
+2016-07-03 23:05:09,272 : INFO : built Dictionary(14110 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2091 documents (total 93151 corpus positions)
+2016-07-03 23:05:24,352 : DEBUG : {'verbose': 0, 'padding_mode': 'center', 'replace_number': True, 'train_data_dict_size': 14110, 'mask_zero': True, 'sentence_padding_length': 50, 'remove_stopword': True, 'add_unkown_word': True, 'train_data_count': 2090, 'need_segmented': True, 'full_mode': True}
+2016-07-03 23:05:42,038 : DEBUG : {'earlyStoping_patience': 5, 'verbose': 3, 'rand_seed': 1337, 'embedding_dropout_rate': 0.5, 'num_labels': 3, 'kmaxpooling_ktop': 1, 'nb_epoch': 10, 'output_dropout_rate': 0.5, 'input_dim': 14110, 'word_embedding_dim': 32, 'conv_filter_type': [[10, 2, 'full'], [10, 4, 'full']], 'input_length': 50}
