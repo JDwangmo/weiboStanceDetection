@@ -332,20 +332,27 @@ def preprocess_testA():
     :return:
     '''
 
-    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt'
+    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_testdata_half.csv'
+    # train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_all_testdata_15000.csv'
+    # output_file_path = 'result/TaskA_all_testdata_15000.csv'
+    output_file_path = 'result/TaskA_all_testdata_half_15000.csv'
 
     data_util = DataUtil()
 
     data = data_util.load_data(train_dataA_file_path)
+
+    data['ID'] = data['ID'].astype(dtype=int)
+
     data_util.print_data_detail(data, has_stance=False)
     print data.shape
     print data.head()
+    # quit()
     # 将有空数值的数据去除
     data = data_util.processing_na_value(data,
                                          clear_na=True,
                                          columns=[u'TEXT'],
                                          )
-    logging.debug('去除空值数据后剩下%d条数据。'%len(data))
+    logging.debug('去除TEXT字段空值数据后剩下%d条数据。'%len(data))
     print '去除空值数据后剩下%d条数据。'%len(data)
     print '有%d个句子是已经标注'%sum(data[u'PREDICT'].notnull())
 
@@ -363,25 +370,25 @@ def preprocess_testA():
     count_null_data = sum(data['WORDS'].isnull())
     logging.debug('WORDS出现空值数：%d' % count_null_data)
     print 'WORDS出现空值数：%d' % count_null_data
-    # data = data_util.processing_na_value(data, clear_na=True, columns=['WORDS'])
+    data = data_util.processing_na_value(data, clear_na=True, columns=['WORDS'])
     # logging.debug('去除WORDS空值数据后剩下%d条数据。' % len(data))
-    # print '去除WORDS空值数据后剩下%d条数据。' % len(data)
+    print '去除WORDS空值数据后剩下%d条数据。' % len(data)
 
     logging.debug('-' * 20)
     print '-' * 20
     # -------------- region end : 对句子开始分词 ---------------
 
 
-    data_util.save_data(data, 'result/TaskA_all_testdata_15000.csv')
+    data_util.save_data(data, output_file_path)
 
 
 if __name__ == '__main__':
     # 数据 evasampledata4-TaskAA.txt 预处理主流程
-    preprocess_dataAA()
+    # preprocess_dataAA()
 
     # 数据 evasampledata4-TaskAR.txt 预处理主流程
     # preprocess_dataAR()
 
     # NLPCC2016_Stance_Detection_Task_A_Testdata.txt预处理主流程
-    # preprocess_testA()
+    preprocess_testA()
 

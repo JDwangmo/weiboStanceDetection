@@ -62,6 +62,12 @@
     - `train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt`:官方测试数据集，未分词，因为有部分句子已标注，所以自行添加了一个PREDICT字段，总共15000句，TEXT字段无空值。
     
     - `train_data/TaskA_all_testdata_15000.csv`:官方测试数据集，在`train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt`基础上，,已分好词，含15000句,分完词之后出现34句是空值的，剩下有14966句。
+    - `train_data/TaskA_all_testdata_14966.csv`:官方测试数据集，在`train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt`基础上，将句子分词，已去除WORDS空串，剩下14966句。
+    
+    - `train_data/TaskA_testdata_half.csv`:官方测试数据集，在`train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt`基础上，将句子切分成一半（句子长度<=4的不切，>4的切一半），切半后句子未分词。
+    
+    - `train_data/TaskA_all_testdata_half_15000.csv`:官方测试数据集，在`train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt`基础上，将句子分词,有15000句。
+    - `train_data/TaskA_all_testdata_half_14966.csv`:官方测试数据集，在`train_data/TaskA_testdata_half.csv`基础上，将句子分词,有，不过其中有34句，在分词之后为空串。
 
 ### 项目架构
 - data_processing:数据预处理包
@@ -170,7 +176,8 @@
         - 方案1(H版本)：条件最严格
             - 只取support>=0.6 & frequency>=5  的取出来做候选，共1272个
             1. support>=0.85 & frequency>=5 （共\*个）和 support>=0.8 & frequency>=10 的直接出线 （增加共\*个）,合起来共188个。[train_data/selected_keywords_188.csv]
-            2. 剩余的 1084个，和全部非自身（也即是1272个）的候选，两两组合(1377764个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(565个)。[train_data/selected_2gram_565.csv]
+            2A. 剩余的 1084个，和全部非自身（也即是1272个）的候选，两两组合(1377764个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(565个)。[train_data/selected_2gram_565.csv]
+            2B. 全部非自身（也即是1272个）的候选，两两组合(1616712个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(866个)。[train_data/selected_2gram_H_866.csv]
             3. 出线后的词，直接用于第一轮（基于规则的判断），多个词同时出现在同一句会很正常，可以就取最高support的。（对于（2）的词，只在他大于入选的组合词也在时才纳入比较）
             - （1）全句，训练、测试
             - （2）半句，训练、测试
@@ -179,16 +186,17 @@
         - 方案2(M版本)：条件中等
             - 只取support>=0.6 & frequency>=5  的取出来做候选，共1272个
             1. support>=0.8 & frequency>=5 （共369个）和 support>=0.75 & frequency>=10 的直接出线 （增加共40个）,合起来共406个。[train_data/selected_keywords_406.csv]
-            2. 剩余的 866个，和全部非自身（也即是1272个）的候选，两两组合，如果有达到上述（1）标注的也出线，这个统计看看有多少(673个)。[train_data/selected_2gram_673.csv]
+            2A. 剩余的 866个，和全部非自身（也即是1272个）的候选，两两组合，如果有达到上述（1）标注的也出线，这个统计看看有多少(673个)。[train_data/selected_2gram_673.csv]
+            2B. 全部非自身（也即是1272个）的候选，两两组合(1616712个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(1288个)。[train_data/selected_2gram_M_1288.csv]
             3. 出线后的词，直接用于第一轮（基于规则的判断），多个词同时出现在同一句会很正常，可以就取最高support的。（对于（2）的词，只在他大于入选的组合词也在时才纳入比较）
             - （1）全句，训练、测试
             - （2）半句，训练、测试
             - （3）全句训练，半句测试 （比（1）和（2）增加了训练语料的保留，当然会顺带有些副作用，比如那些有转折的也一起参加训练，好坏难说，交给程序结果来看吧）
                     
         - 方案3(L版本)：条件最宽松
-            - 只取support>=0.55 & frequency>=5  的取出来做候选，共1593个
-            1. support>=0.75 & frequency>=5 （共\*个）和 support>=0.7 & frequency>=10 的直接出线 （增加共\*个）,合起来共541个。[train_data/selected_keywords_188.csv]
-            2. 全部非自身（也即是1593个）的候选，两两组合(2536056个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(565个)。[train_data/selected_2gram_565.csv]
+            - 只取support>=0.55 & frequency>=5  的取出来做候选，共1593个.[]
+            1. support>=0.75 & frequency>=5 （共\*个）和 support>=0.7 & frequency>=10 的直接出线 （增加共\*个）,合起来共541个。[train_data/selected_keywords_541.csv]
+            2. 全部非自身（也即是1593个）的候选，两两组合(2536056个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(2780个)。[train_data/selected_2gram_2780.csv]
             3. 出线后的词，直接用于第一轮（基于规则的判断），多个词同时出现在同一句会很正常，可以就取最高support的。（对于（2）的词，只在他大于入选的组合词也在时才纳入比较）
             - （1）全句，训练、测试
             - （2）半句，训练、测试
