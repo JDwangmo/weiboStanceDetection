@@ -106,16 +106,19 @@
             - 'verbose': 1,
             - 具体如下：
             
-            | 训练数据  |句子补齐长度|卷积核类型|rand_seed|词向量维度|迭代次数(最大/early stop/最终)|测试数据|准确率|F1值宏平均(Favor,Against,None)|结束时训练误差|模型名|
-            |---|---|---|---|---|---|---|---|---|---|---|
-            | 训练半M  | 93  | 248  |0 | 50  | 20/50/20  | 测试半M  | 345(0.385045)  | 0.278002([ 0.55600322，0.， 0.]) |1.0460|RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_0seed.pkl|
-            | 训练半M  | 93  | 248  |100 | 50  | 20/50/20  | 测试半M  | 345(0.385045)  | 0.278002([ 0.55600322  0.          0.        ]) |  1.0986|RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_100seed.pkl|
-            | 训练半M  | 93  | 248  |400 | 50  | 20/50/20  | 测试半M  | 477(0.532366)  | 0.591280([ 0.56573705  0.61682243  0.        ]) |  0.9505|RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_400seed.pkl|
-            | 训练半M  | 93  | 248  |600 | 50  | 20/50/20  | 测试半M  | 458(0.511161)  | 0.569670([ 0.56374269  0.57559682  0.        ]) |  1.0427 |RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_600seed.pkl|
-            | 训练半M  | 93  | 248  |800 | 50  | 20/50/20  | 测试半M  | 484(0.540179)  | 0.599057([ 0.57025921  0.62785388  0.        ]) |  0.9711 |RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_800seed.pkl|
-            | 训练半M  | 93  | 248  |1000 | 50  | 20/50/20  | 测试半M  | 482(0.537946)  | 0.593691([ 0.55221745  0.63516484  0.        ]) |  0.9735 |RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_1000seed.pkl|
-            | 训练全  | 93  | 248  |1000 | 50  | 30/50/30  | 测试半M  | 484(0.540179)  | 0.601959([ 0.59649123，0.60742706，0.]) |  0.9252 |RandEmbeddingCNN_adadelta_93len_50dim_1k_fulltrain_30epoch_1000seed.pkl|
-            | 训练全  | 93  | 248  |1000 | 300  | 30/50/30  | 测试半M  | 526(0.587054)  | 0.641443([ 0.62879789,0.65408805,0.23333333]) |  0.\* |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_1000seed.pkl|
+            | 训练数据  |优化算法|句子补齐长度|卷积核类型|rand_seed|词向量维度|迭代次数(最大/early stop/最终)|测试数据|准确率|F1值宏平均(Favor,Against,None)|结束时训练误差|模型名|
+            |---|---|---|---|---|---|---|---|---|---|---|---|
+            | 训练半M  | 93  | adadelta |248  |0 | 50  | 20/50/20  | 测试半M  | 345(0.385045)  | 0.278002([ 0.55600322，0.， 0.]) |1.0460|RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_0seed.pkl|
+            | 训练半M  | 93  | adadelta|248  |100 | 50  | 20/50/20  | 测试半M  | 345(0.385045)  | 0.278002([ 0.55600322  0.          0.        ]) |  1.0986|RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_100seed.pkl|
+            | 训练半M  | 93  | adadelta|248  |400 | 50  | 20/50/20  | 测试半M  | 477(0.532366)  | 0.591280([ 0.56573705  0.61682243  0.        ]) |  0.9505|RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_400seed.pkl|
+            | 训练半M  | 93  |adadelta| 248  |600 | 50  | 20/50/20  | 测试半M  | 458(0.511161)  | 0.569670([ 0.56374269  0.57559682  0.        ]) |  1.0427 |RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_600seed.pkl|
+            | 训练半M  | 93  | adadelta|248  |800 | 50  | 20/50/20  | 测试半M  | 484(0.540179)  | 0.599057([ 0.57025921  0.62785388  0.        ]) |  0.9711 |RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_800seed.pkl|
+            | 训练半M  | 93  | adadelta|248  |1000 | 50  | 20/50/20  | 测试半M  | 482(0.537946)  | 0.593691([ 0.55221745  0.63516484  0.        ]) |  0.9735 |RandEmbeddingCNN_adadelta_93len_50dim_1k_Mhalftrain_20epoch_1000seed.pkl|
+            | 训练全  | 93  | adadelta|248  |1000 | 50  | 30/50/30  | 测试半M  | 484(0.540179)  | 0.601959([ 0.59649123，0.60742706，0.]) |  0.9252 |RandEmbeddingCNN_adadelta_93len_50dim_1k_fulltrain_30epoch_1000seed.pkl|
+            | 训练全  | 93  | adadelta|248  |1000 | 300  | 30/50/30  | 测试半M  | 526(0.587054)  | 0.641443([ 0.62879789,0.65408805,0.23333333]) |  0.\* |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_1000seed.pkl|
+            | 训练全  | 93  | adadelta|248  |2000 | 300  | 30/50/30  | 测试半M  | 524(0.584821)  | 0.631070([ 0.60892388,0.65321564,0.27848101]) |  0.6883 |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_2000seed.pkl|
+            | 训练全  | 93  | adadelta|248  |4000 | 300  | 30/50/30  | 测试半M  | 524(0.584821)  | 0.631070([ 0.60892388,0.65321564,0.27848101]) |  0.6883 |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_2000seed.pkl|
+            | 训练全  | 93  | 248  |1000 | 300  | 30/50/30  | 测试半M  | 361(0.402902)  | 0.448278([ 0.43196005,0.46459627,0.01075269]) |  0.9302 |RandEmbeddingCNN_sgd_93len_300dim_1k_fulltrain_30epoch_1000seed.pkl|
 
         - 效果:
         - 情形1: 1层CNN;使用 [[train_data/all_data_2986.csv,2986句](https://github.com/JDwangmo/weiboStanceDetection/tree/master/train_data)]做训练.[[train_data/test_data_896.csv,896句](https://github.com/JDwangmo/weiboStanceDetection/tree/master/train_data)].结果位于[[./result/ISCSLP2016/20160618/](https://github.com/JDwangmo/weiboStanceDetection/tree/master/result/20160630/)]句子最长长度为：175,句子最短长度为：3,句子平均长度为：44.

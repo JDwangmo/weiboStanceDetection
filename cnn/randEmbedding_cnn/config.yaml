@@ -11,20 +11,24 @@ randEmbedding_cnn:
     name: &name RandEmbeddingCNN
 
     train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_%s_2090.csv
+    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_%s_3000.csv
 #    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_half_2090.csv
 #    test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_896.csv
     test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_test_data_%s_896.csv
+#    test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_test_data_%s_14966.csv
 
 #    train_data_type: &train_data_type Mhalf
-    train_data_type: &train_data_type full
-    test_data_type: &test_data_type Mhalf
+#    train_data_type: &train_data_type full
+    train_data_type: &train_data_type final
+    test_data_type: &test_data_type full
+#    test_data_type: &test_data_type Mhalf
 
     refresh_all_model: False
 #    是否生成cnn深度特征
     genernate_cnn_feature: False
 
 #    rand_seed: [0,100,400,600,800,1000]
-    rand_seed: [1000]
+    rand_seed: [1000,2000,4000,5000]
 
     verbose: 2
 
@@ -47,6 +51,7 @@ randEmbedding_cnn:
     cnn_nb_epoch: &cnn_nb_epoch 30
 
     optimizers: &optimizers adadelta
+#    optimizers: &optimizers sgd
 
     earlyStoping_patience: 50
 

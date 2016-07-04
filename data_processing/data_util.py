@@ -338,6 +338,7 @@ def preprocess_dataAA():
 def preprocess_dataAR():
     '''
         数据 evasampledata4-TaskAR.txt 预处理主流程
+
     :return:
     '''
 
@@ -373,11 +374,11 @@ def preprocess_testA():
     :return:
     '''
 
-    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_Mhalf_2090.csv'
+    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/NLPCC2016_Stance_Detection_Task_A_Testdata.txt'
     # train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_testdata_Mhalf_896.csv'
     # train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_all_testdata_15000.csv'
     # output_file_path = 'result/TaskA_all_testdata_15000.csv'
-    output_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_Mhalf_2090.csv'
+    output_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_all_data_3000_Mhalf.csv'
     # output_file_path = 'result/TaskAA_testdata_Mhalf_896.csv'
 
     data_util = DataUtil()
@@ -425,6 +426,52 @@ def preprocess_testA():
     data_util.save_data(data, output_file_path)
 
 
+def padding_dataAA():
+    '''
+        文件 train_data/TaskAA_all_data_3000.csv 补全漏标标签 处理过程
+
+    :return:
+    '''
+    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/evasampledata4-TaskAA.txt'
+    # train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_testdata_Mhalf_896.csv'
+    # train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_all_testdata_15000.csv'
+    # output_file_path = 'result/TaskA_all_testdata_15000.csv'
+    output_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_all_data_3000.csv'
+    # output_file_path = 'result/TaskAA_testdata_Mhalf_896.csv'
+
+    data_util = DataUtil()
+
+    data = data_util.load_data(train_dataA_file_path)
+
+    # data['ID'] = data['ID'].astype(dtype=int)
+
+    # data[data['STANCE'].isnull()]['STANCE'] =u'NONE'
+    # print data[data['STANCE'].isnull()]['STANCE']
+    data_util.print_data_detail(data, has_stance=True)
+    # print data.loc[3001]
+    data.loc[data['STANCE'].isnull(),'STANCE'] = 'None'
+
+    data_util.print_data_detail(data, has_stance=True)
+    print data.shape
+    # print data.head()
+    # quit()
+    # print data['STANCE'][data['STANCE'].isnull()]
+    # quit()
+    data['WORDS'] = data['TEXT'].apply(data_util.segment_sentence)
+    # 将有空数值的数据去除
+    # data = data_util.processing_na_value(data,
+    #                                      clear_na=True,
+    #                                      columns=[u'TEXT'],
+    #                                      )
+    # logging.debug('去除TEXT字段空值数据后剩下%d条数据。' % len(data))
+    # print '去除空值数据后剩下%d条数据。' % len(data)
+    # print '有%d个句子是已经标注'%sum(data[u'PREDICT'].notnull())
+
+    data_util.save_data(data, output_file_path)
+
+
+
+
 if __name__ == '__main__':
     # 数据 evasampledata4-TaskAA.txt 预处理主流程
     # preprocess_dataAA()
@@ -433,5 +480,7 @@ if __name__ == '__main__':
     # preprocess_dataAR()
 
     # NLPCC2016_Stance_Detection_Task_A_Testdata.txt预处理主流程
-    preprocess_testA()
+    # preprocess_testA()
 
+    # 文件train_data / TaskAA_all_data_3000.csv 补全漏标标签处理过程
+    padding_dataAA()

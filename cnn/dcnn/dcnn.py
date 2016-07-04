@@ -31,28 +31,11 @@ from data_processing.data_util import DataUtil
 import os
 
 # -------------- region start : 1. 加载训练集和测试集 -------------
-if verbose > 2:
-    logging.debug('-' * 20)
-    print('-' * 20)
-    logging.debug('1. 加载训练集和测试集')
-    print('1. 加载训练集和测试集')
-# -------------- code start : 开始 -------------
-train_data_file_path = (config['train_data_filte_path'])%config['train_data_type']
-test_data_file_path = (config['test_data_filte_path'])%config['test_data_type']
-logging.debug(train_data_file_path)
-print(train_data_file_path)
-logging.debug(test_data_file_path)
-print(test_data_file_path)
 
 data_util = DataUtil()
-train_data = data_util.load_data(train_data_file_path)
-test_data = data_util.load_data(test_data_file_path)
 
+train_data,test_data,label_to_index,index_to_label = data_util.load_train_test_data(config)
 
-# -------------- code start : 结束 -------------
-if verbose > 2:
-    logging.debug('-' * 20)
-    print('-' * 20)
 # -------------- region end : 1. 加载训练集和测试集 ---------------
 
 # -------------- region start : 2. 转换数据格式，以可以进行分类 -------------
@@ -63,8 +46,6 @@ if verbose > 2:
     print('2. 转换数据格式，以可以进行分类')
 # -------------- code start : 开始 -------------
 
-label_to_index = {u'FAVOR': 0, u'AGAINST': 1, u'NONE': 2}
-index_to_label = [u'FAVOR', u'AGAINST', u'NONE']
 
 # 将TARGET和TEXT字段进行拼接
 train_X = (train_data['TARGET'] + ',' + train_data['TEXT']).as_matrix()
@@ -100,83 +81,91 @@ if verbose > 2:
 
 
 
-# -------------- region start : 3. 初始化CNN模型并训练 -------------
-if verbose > 2:
-    logging.debug('-' * 20)
-    print('-' * 20)
-    logging.debug('3. 初始化CNN模型并训练')
-    print('3. 初始化CNN模型并训练')
-# -------------- code start : 开始 -------------
+for seed in config['rand_seed']:
 
-model_file_path = ''.join([str(item) for item in config['model_file_path']])
+    # -------------- region start : 3. 初始化CNN模型并训练 -------------
+    if verbose > 2:
+        logging.debug('-' * 20)
+        print('-' * 20)
+        logging.debug('3. 初始化CNN模型并训练')
+        print('3. 初始化CNN模型并训练')
+    # -------------- code start : 开始 -------------
+    # 设置文件地址
+    model_file_path = ''.join([str(item) for item in config['model_file_path']])
+    model_file_path = model_file_path%seed
 
-word_embedding_dim = config['word_embedding_dim']
-
-dcnn_model = DynamicCNN(
-    rand_seed=1337,
-    verbose=3,
-    batch_size=32,
-    vocab_size=feature_encoder.train_data_dict_size,
-    word_embedding_dim=word_embedding_dim,
-    input_length=config['sentence_padding_length'],
-    num_labels=len(label_to_index),
-    conv_filter_type=[[10, 2, 'full'],
-                      [10, 4, 'full'],
-                      # [100, 8, 'full'],
-                      ],
-    ktop=1,
-    embedding_dropout_rate=0.5,
-    output_dropout_rate=0.5,
-    nb_epoch=10,
-    earlyStoping_patience=5,
-    )
-dcnn_model.print_model_descibe()
-
-if config['refresh_all_model'] or not os.path.exists(model_file_path):
-    # 训练模型
-    dcnn_model.fit((feature_encoder.train_padding_index, train_y),
-                   (map(feature_encoder.encoding_sentence, test_X), test_y))
-    # 保存模型
-    dcnn_model.save_model(model_file_path)
-else:
-    # 从保存的pickle中加载模型
-    dcnn_model.model_from_pickle(model_file_path)
-
-# -------------- code start : 结束 -------------
-if verbose > 2:
-    logging.debug('-' * 20)
-    print('-' * 20)
-# -------------- region end : 3. 初始化CNN模型并训练 ---------------
-
-# -------------- region start : 4. 预测 -------------
-if verbose > 1:
-    logging.debug('-' * 20)
-    print('-' * 20)
-    logging.debug('4. 预测')
-    print('4. 预测')
-# -------------- code start : 开始 -------------
+    result_file_path = ''.join([str(item) for item in config['result_file_path']])
+    result_file_path = result_file_path % seed
 
 
+    print(model_file_path)
+    print(result_file_path)
 
-print(index_to_label[dcnn_model.predict(feature_encoder.encoding_sentence('你好吗'))])
+    dcnn_model = DynamicCNN(
+        rand_seed=1337,
+        verbose=3,
+        batch_size=32,
+        vocab_size=feature_encoder.train_data_dict_size,
+        word_embedding_dim=config['word_embedding_dim'],
+        input_length=config['sentence_padding_length'],
+        num_labels=len(label_to_index),
+        conv_filter_type=[[10, 2, 'full'],
+                          [10, 4, 'full'],
+                          # [100, 8, 'full'],
+                          ],
+        ktop=1,
+        embedding_dropout_rate=0.5,
+        output_dropout_rate=0.5,
+        nb_epoch=10,
+        earlyStoping_patience=5,
+        )
+    dcnn_model.print_model_descibe()
 
-y_pred, is_correct, accu,f1 = dcnn_model.accuracy((map(feature_encoder.encoding_sentence, test_X), test_y))
-logging.debug('F1(macro)为：%f'%(np.average(f1[:-1])))
-print('F1(macro)为：%f' % (np.average(f1[:-1])))
-test_data[u'IS_CORRECT'] = is_correct
-test_data[u'PREDICT'] = [index_to_label[item] for item in y_pred]
-# data_util.save_data(test_data,'tmp.tmp')
-# quit()
-result_file_path = ''.join(config['result_file_path'])
+    if config['refresh_all_model'] or not os.path.exists(model_file_path):
+        # 训练模型
+        dcnn_model.fit((feature_encoder.train_padding_index, train_y),
+                       (map(feature_encoder.encoding_sentence, test_X), test_y))
+        # 保存模型
+        dcnn_model.save_model(model_file_path)
+    else:
+        # 从保存的pickle中加载模型
+        dcnn_model.model_from_pickle(model_file_path)
 
-data_util.save_data(test_data,
-                    path=result_file_path)
+    # -------------- code start : 结束 -------------
+    if verbose > 2:
+        logging.debug('-' * 20)
+        print('-' * 20)
+    # -------------- region end : 3. 初始化CNN模型并训练 ---------------
 
-# -------------- code start : 结束 -------------
-if verbose > 1:
-    logging.debug('-' * 20)
-    print('-' * 20)
-# -------------- region end : 4. 预测 ---------------
+    # -------------- region start : 4. 预测 -------------
+    if verbose > 1:
+        logging.debug('-' * 20)
+        print('-' * 20)
+        logging.debug('4. 预测')
+        print('4. 预测')
+    # -------------- code start : 开始 -------------
+
+
+
+    print(index_to_label[dcnn_model.predict(feature_encoder.encoding_sentence('你好吗'))])
+
+    y_pred, is_correct, accu,f1 = dcnn_model.accuracy((map(feature_encoder.encoding_sentence, test_X), test_y))
+    logging.debug('F1(macro)为：%f'%(np.average(f1[:-1])))
+    print('F1(macro)为：%f' % (np.average(f1[:-1])))
+    test_data[u'IS_CORRECT'] = is_correct
+    test_data[u'PREDICT'] = [index_to_label[item] for item in y_pred]
+    # data_util.save_data(test_data,'tmp.tmp')
+    # quit()
+    result_file_path = ''.join(config['result_file_path'])
+
+    data_util.save_data(test_data,
+                        path=result_file_path)
+
+    # -------------- code start : 结束 -------------
+    if verbose > 1:
+        logging.debug('-' * 20)
+        print('-' * 20)
+    # -------------- region end : 4. 预测 ---------------
 
 
 
