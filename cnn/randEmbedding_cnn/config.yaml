@@ -21,7 +21,7 @@ randEmbedding_cnn:
 
     refresh_all_model: False
 #    是否生成cnn深度特征
-    genernate_cnn_feature: True
+    genernate_cnn_feature: False
 
 #    rand_seed: [0,100,400,600,800,1000]
     rand_seed: [1000]
@@ -44,7 +44,9 @@ randEmbedding_cnn:
 
     kmax_k: &kmax_k 1
 
-    cnn_nb_epoch: &cnn_nb_epoch '30'
+    cnn_nb_epoch: &cnn_nb_epoch 30
+
+    optimizers: &optimizers adadelta
 
     earlyStoping_patience: 50
 
@@ -52,12 +54,12 @@ randEmbedding_cnn:
 
     output_dropout_rate: 0.5
 
-    model_file_path: &model_file_path [*project_path,'/model/',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.pkl']
+    model_file_path: &model_file_path [*project_path,'/model/',*name,'_',*optimizers,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.pkl']
 
-    train_cnn_feature_file_path: [*project_path,'/result/train',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.npy']
-    test_cnn_feature_file_path: [*project_path,'/result/test',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.npy']
+    train_cnn_feature_file_path: [*project_path,'/feature/train_',*name,'_',*optimizers,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.npy']
+    test_cnn_feature_file_path: [*project_path,'/feature/test_',*name,'_',*optimizers,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.npy']
 
 
     log_file_path: [*project_path,'/log/',*date,'_',*name,'.log']
   
-    result_file_path: [*project_path,'/result/',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.csv']
+    result_file_path: [*project_path,'/result/',*name,'_',*optimizers,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.csv']

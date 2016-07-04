@@ -123,6 +123,7 @@ for seed in config['rand_seed']:
     rand_embedding_cnn = WordEmbeddingCNN(
         rand_seed=seed,
         verbose=verbose,
+        optimizers=config['optimizers'],
         input_dim=feature_encoder.train_data_dict_size + 1,
         word_embedding_dim=config['word_embedding_dim'],
         input_length=config['sentence_padding_length'],
