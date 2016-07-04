@@ -1,30 +1,37 @@
-project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/wordEmbedding_cnn
+project_path: &project_path /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn
 date: &date '20160623'
 
 #------------------------------------- RandEmbeddingCNN ----------------------------------------------
 randEmbedding_cnn:
-    path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/wordEmbedding_cnn/wordEmbedding_cnn.py
+    path: /home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/randEmbedding_cnn.py
   
     # 描述
     describe: 
 
     name: &name RandEmbeddingCNN
 
-    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_%s_2090.csv
+    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_%s_2090.csv
 #    train_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_half_2090.csv
 #    test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_896.csv
-    test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_half_896.csv
+    test_data_filte_path: /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_test_data_%s_896.csv
 
+#    train_data_type: &train_data_type Mhalf
     train_data_type: &train_data_type full
+    test_data_type: &test_data_type Mhalf
 
-    refresh_all_model: True
+    refresh_all_model: False
+#    是否生成cnn深度特征
+    genernate_cnn_feature: True
 
-    verbose: 1
+#    rand_seed: [0,100,400,600,800,1000]
+    rand_seed: [1000]
+
+    verbose: 2
 
     need_segmented: True
 
     sentence_padding_length: &sentence_padding_length 93
-    word_embedding_dim: &word_embedding_dim 50
+    word_embedding_dim: &word_embedding_dim 300
 
 
     conv_filter_type: [
@@ -34,9 +41,10 @@ randEmbedding_cnn:
                         [100,8,*word_embedding_dim,'valid'],
                         # [100,10,*word_embedding_dim,'valid'],
                       ]
-    kmax_k: 1
 
-    cnn_nb_epoch: &cnn_nb_epoch '2'
+    kmax_k: &kmax_k 1
+
+    cnn_nb_epoch: &cnn_nb_epoch '30'
 
     earlyStoping_patience: 50
 
@@ -44,9 +52,12 @@ randEmbedding_cnn:
 
     output_dropout_rate: 0.5
 
-    model_file_path: &model_file_path [*project_path,'/model/',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*train_data_type,'train_',*cnn_nb_epoch,'epoch.pkl']
+    model_file_path: &model_file_path [*project_path,'/model/',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.pkl']
+
+    train_cnn_feature_file_path: [*project_path,'/result/train',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.npy']
+    test_cnn_feature_file_path: [*project_path,'/result/test',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.npy']
 
 
     log_file_path: [*project_path,'/log/',*date,'_',*name,'.log']
   
-    result_file_path: [*project_path,'/result/',*date,'_',*name,'.csv']
+    result_file_path: [*project_path,'/result/',*date,'_',*name,'_',*sentence_padding_length,'len_',*word_embedding_dim,'dim_',*kmax_k,'k_',*train_data_type,'train_',*cnn_nb_epoch,'epoch_%dseed.csv']

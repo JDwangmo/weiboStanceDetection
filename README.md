@@ -54,7 +54,9 @@
     
     - `train_data/train_data_half_2090.csv`:该文件在`train_data/train_data_2090.csv`基础上，将原句子进行截断处理，只取原句子的一半句子,2090句。
     
-    - `train_data/test_data_half_896.csv`:该文件在`train_data/test_data_half_896.csv`基础上，将原句子进行截断处理，只取原句子的一半句子,896句。
+    - `train_data/test_data_half_896.csv`:该文件在`train_data/test_data_896.csv`基础上，将原句子进行截断处理，只取原句子的一半句子,896句。
+    
+    - `train_data/test_data_Mhalf_896.csv`:该文件在`train_data/test_data_896.csv`基础上，将原句子进行截断处理，只取原句子的一半句子（句子长度<=4的不切，>4的切一半）,896句,已经分词。
     
     - `train_data/evasampledata4-TaskAR.txt`:官方无标注训练数据，用于任务A，3000句，TEXT字段有空值数据。
     - `train_data/TaskAR_all_data_2997.csv`:该文件在`train_data/evasampledata4-TaskAR.txt，3000句`基础上，进行了去除空值（原来3000句，由于TEXT字段有三个空值，去除掉，剩下2997句）和分词，2997句。
@@ -76,7 +78,41 @@
     
 - cnn: 卷积伸进网络分类器
     - randEmbedding_cnn: CNN-rand模型,具体见：https://github.com/JDwangmo/coprocessor#randomembedding_padding_cnn
-    
+        - 实验设置1：
+            - 数据：   
+                - 训练全： [train_data/train_data_full_2090.csv]. 句子最长长度为：175,句子最短长度为：3,句子平均长度为：44,字典数量：14110。
+                - 训练半H：[train_data/train_data_half_2090.csv]. 所有句子都切成一半，结果：句子最长长度为：93，句子最短长度为：2，句子平均长度为：27,字典数量：10543。
+                - 训练半M：[train_data/TaskAA_train_data_Mhalf_2090.csv]. 切分方案为：>4切一半，<=4不切全保留，结果：句子最长长度为：93，句子最短长度为：3，句子平均长度为：30,字典数量：11241。
+                - 测试全：[train_data/test_data_full_896.csv].
+                - 测试半H：[train_data/test_data_half_896.csv].
+                - 测试半M：[train_data/TaskAA_test_data_Mhalf_896.csv].
+            - 通用设置：
+            - {'add_unkown_word': True,
+            - 'full_mode': True,
+            - 'mask_zero': True,
+            - 'need_segmented': True,
+            - 'padding_mode': 'center',
+            - 'remove_stopword': True,
+            - 'replace_number': True,
+            - 'train_data_count': 2090,
+            - 'verbose': 0}
+            - 'embedding_dropout_rate': 0.5,
+            - 'embedding_init use rand': False,
+            - 'kmaxpooling_k': 1,
+            - 'num_labels': 3,
+            - 'output_dropout_rate': 0.5,
+            - 'rand_seed': 1337,
+            - 'verbose': 1,
+        
+            | 训练数据  |句子补齐长度|rand_seed|卷积核类型|词向量维度|迭代次数(最大/early stop/最终)|测试数据|准确率|F1值`宏平均(Favor,Against,None)`|结束时训练误差|
+            |---|---|---|---|---|---|---|---|---|
+            | 训练半M  | 93  | 248  |0 | 50  | 20/50/20  | 测试半M  | 345(0.385045)  | 0.278002([ 0.55600322  0.          0.        ])  | 1.0460|
+            | 训练半M  | 93  | 248  |100 | 50  | 20/50/20  | 测试半M  | 345(0.385045)  | 0.278002([ 0.55600322  0.          0.        ]) |  1.0986|
+            | 训练半M  | 93  | 248  |400 | 50  | 20/50/20  | 测试半M  | 477(0.532366)  | 0.591280([ 0.56573705  0.61682243  0.        ]) |  0.9505|
+            | 训练半M  | 93  | 248  |600 | 50  | 20/50/20  | 测试半M  | 458(0.511161)  | 0.569670([ 0.56374269  0.57559682  0.        ]) |  1.0427 |
+            | 训练半M  | 93  | 248  |800 | 50  | 20/50/20  | 测试半M  | 484(0.540179)  | 0.599057([ 0.57025921  0.62785388  0.        ]) |  0.9711 |
+            | 训练半M  | 93  | 248  |1000 | 50  | 20/50/20  | 测试半M  | 482(0.537946)  | 0.593691([ 0.55221745  0.63516484  0.        ]) |  0.9735 |
+
         - 效果:
         - 情形1: 1层CNN;使用 [[train_data/all_data_2986.csv,2986句](https://github.com/JDwangmo/weiboStanceDetection/tree/master/train_data)]做训练.[[train_data/test_data_896.csv,896句](https://github.com/JDwangmo/weiboStanceDetection/tree/master/train_data)].结果位于[[./result/ISCSLP2016/20160618/](https://github.com/JDwangmo/weiboStanceDetection/tree/master/result/20160630/)]句子最长长度为：175,句子最短长度为：3,句子平均长度为：44.
             - 
@@ -163,13 +199,13 @@
             - 'rand_seed': 1337,
             - 'verbose': 1,
         
-            | 训练数据  |pretrain词向量|句子补齐长度|卷积核类型|词向量维度|迭代次数(最大/early stop/最终)|测试数据|准确率|F1值|结束时训练误差|
-            |---|---|---|---|---|---|---|---|---|---|
-            | 训练全  |train_data_full_20963_50dim_50iter_cbow.gem  | 93  | 248  | 50  | 200/100/186  | 测试全  | 338(0.377232)  | 0.278368([ 0.54615385  0.01058201  0.27807487])  |0.9779| 
-            | 训练半  | train_data_full_20963_50dim_50iter_cbow.gem  | 93  | 248  | 50  | 200/100/200  | 测试全  | 467(0.5212052)  | 0.568713([ 0.59142212  0.54600302  0.19753086])  | 0.8578|
-            | 训练全  | train_data_full_20963_50dim_50iter_cbow.gem  | 93  | 248  | 300  | 200/100/200  | 测试全  | \*(0.5212052)  | \*([ 0.59142212  0.54600302  0.19753086])  | \*|
-            | 训练半  | train_data_full_20963_50dim_50iter_cbow.gem  | 93  | 248  | 300  | 200/100/200  | 测试全  | \*(0.5212052)  | \*([ 0.59142212  0.54600302  0.19753086])  | \*|
-            | 训练全  | train_data_full_20963_50dim_50iter_cbow.gem  | 150  | 248  | 300  | 200/100/200  | 测试全  | \*(0.5212052)  | \*([ 0.59142212  0.54600302  0.19753086])  | \*|
+            | 训练数据  |pretrain词向量|rand_seed|句子补齐长度|卷积核类型|词向量维度|迭代次数(最大/early stop/最终)|测试数据|准确率|F1值|结束时训练误差|
+            |---|---|---|---|---|---|---|---|---|---|---|
+            | 训练全  |train_data_full_20963_50dim_50iter_cbow.gem  |1337| 93  | 248  | 50  | 200/100/186  | 测试全  | 338(0.377232)  | 0.278368([ 0.54615385  0.01058201  0.27807487])  |0.9779| 
+            | 训练半  | train_data_full_20963_50dim_50iter_cbow.gem  |1337| 93  | 248  | 50  | 200/100/200  | 测试全  | 467(0.5212052)  | 0.568713([ 0.59142212  0.54600302  0.19753086])  | 0.8578|
+            | 训练全  | train_data_full_20963_50dim_50iter_cbow.gem  |1337| 93  | 248  | 300  | 200/100/200  | 测试全  | \*(0.5212052)  | \*([ 0.59142212  0.54600302  0.19753086])  | \*|
+            | 训练半  | train_data_full_20963_50dim_50iter_cbow.gem  |1337| 93  | 248  | 300  | 200/100/200  | 测试全  | \*(0.5212052)  | \*([ 0.59142212  0.54600302  0.19753086])  | \*|
+            | 训练全  | train_data_full_20963_50dim_50iter_cbow.gem  |1337| 150  | 248  | 300  | 200/100/200  | 测试全  | \*(0.5212052)  | \*([ 0.59142212  0.54600302  0.19753086])  | \*|
 
 - cue_pharse :关键词匹配
      - cue_pharse.py:使用[train_data/TaskAA_all_data_2986.csv]进行统计

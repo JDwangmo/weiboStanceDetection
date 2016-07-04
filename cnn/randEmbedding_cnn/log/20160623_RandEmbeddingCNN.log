@@ -1,31 +1,9 @@
-2016-07-01 20:58:27,311 : DEBUG : ==============================
-2016-07-01 20:58:27,311 : DEBUG : None
-2016-07-01 20:58:27,311 : DEBUG : ==============================
-2016-07-01 20:58:27,311 : DEBUG : start running!
-2016-07-01 20:58:27,311 : DEBUG : ====================
-2016-07-01 20:58:27,470 : INFO : Pattern library is not installed, lemmatization won't be available.
-2016-07-01 20:58:27,588 : DEBUG : Fast version of gensim.models.word2vec is being used
-2016-07-01 20:58:27,589 : DEBUG : Fast version of gensim.models.doc2vec is being used
-2016-07-01 20:58:27,593 : INFO : 'pattern' package not found; tag filters are not available for English
-2016-07-01 20:58:28,197 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/train_data_full_2090.csv
-2016-07-01 20:58:28,197 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/test_data_half_896.csv
-2016-07-01 20:58:28,197 : DEBUG : Building prefix dict from the default dictionary ...
-2016-07-01 20:58:28,197 : DEBUG : Loading model from cache /tmp/jieba.cache
-2016-07-01 20:58:28,401 : DEBUG : Loading model cost 0.204 seconds.
-2016-07-01 20:58:28,401 : DEBUG : Prefix dict has been built succesfully.
-2016-07-01 20:58:28,515 : DEBUG : ====================
-2016-07-01 20:58:46,201 : DEBUG : ====================
-2016-07-01 20:58:46,201 : DEBUG : 首先,构建训练库字典,然后将每个词映射到一个索引,再将所有句子映射成索引的列表
-2016-07-01 20:58:46,215 : INFO : adding document #0 to Dictionary(0 unique tokens: [])
-2016-07-01 20:58:46,346 : INFO : built Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2090 documents (total 93150 corpus positions)
-2016-07-01 20:58:46,347 : INFO : adding document #0 to Dictionary(14109 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...)
-2016-07-01 20:58:46,347 : INFO : built Dictionary(14110 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 2091 documents (total 93151 corpus positions)
-2016-07-01 20:59:04,408 : DEBUG : {'verbose': 0, 'padding_mode': 'center', 'replace_number': True, 'train_data_dict_size': 14110, 'mask_zero': True, 'sentence_padding_length': 93, 'remove_stopword': True, 'add_unkown_word': True, 'train_data_count': 2090, 'need_segmented': True, 'full_mode': True}
-2016-07-01 20:59:05,508 : DEBUG : {'earlyStoping_patience': 50, 'verbose': 1, 'rand_seed': 1337, 'embedding_dropout_rate': 0.5, 'num_labels': 3, 'nb_epoch': 2, 'output_dropout_rate': 0.5, 'input_dim': 14111, 'word_embedding_dim': 50, 'kmaxpooling_k': 1, 'conv_filter_type': [[100, 2, 50, 'valid'], [100, 4, 50, 'valid'], [100, 8, 50, 'valid']], 'input_length': 93}
-2016-07-01 20:59:10,878 : DEBUG : --------------------
-2016-07-01 21:00:59,145 : DEBUG : 正确的个数:345
-2016-07-01 21:00:59,149 : DEBUG : 准确率为:0.385045
-2016-07-01 21:00:59,151 : DEBUG : F1为：[ 0.55600322  0.          0.        ]
-2016-07-01 21:00:59,152 : DEBUG : F1(macro)为：0.278002
-2016-07-01 21:00:59,177 : DEBUG : ====================
-2016-07-01 21:00:59,177 : DEBUG : end! Running time:151s!
+2016-07-04 17:53:26,313 : DEBUG : ==============================
+2016-07-04 17:53:26,313 : DEBUG : None
+2016-07-04 17:53:26,313 : DEBUG : ==============================
+2016-07-04 17:53:26,314 : DEBUG : start running!
+2016-07-04 17:53:26,314 : DEBUG : ====================
+2016-07-04 17:53:26,922 : INFO : Pattern library is not installed, lemmatization won't be available.
+2016-07-04 17:53:27,348 : DEBUG : Fast version of gensim.models.word2vec is being used
+2016-07-04 17:53:27,352 : DEBUG : Fast version of gensim.models.doc2vec is being used
+2016-07-04 17:53:27,362 : INFO : 'pattern' package not found; tag filters are not available for English

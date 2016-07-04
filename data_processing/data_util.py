@@ -46,6 +46,47 @@ class DataUtil(object):
                                )
         return data
 
+    def load_train_test_data(self,
+                             config = None
+                             ):
+        '''
+            加载训练数据和测试数据,已经标签索引
+
+        :param config:  一些配置信息
+        :param config: dict
+        :return:
+        '''
+
+        # -------------- region start : 1. 加载训练集和测试集 -------------
+        if config['verbose'] > 2:
+            logging.debug('-' * 20)
+            print '-' * 20
+            logging.debug('1. 加载训练集和测试集')
+            print '1. 加载训练集和测试集'
+        # -------------- code start : 开始 -------------
+        train_data_file_path = (config['train_data_filte_path']) % config['train_data_type']
+        test_data_file_path = (config['test_data_filte_path']) % config['test_data_type']
+        logging.debug(train_data_file_path)
+        print train_data_file_path
+        logging.debug(test_data_file_path)
+        print test_data_file_path
+
+        data_util = DataUtil()
+        train_data = data_util.load_data(train_data_file_path)
+        test_data = data_util.load_data(test_data_file_path)
+
+        # -------------- code start : 结束 -------------
+        if config['verbose'] > 2:
+            logging.debug('-' * 20)
+            print '-' * 20
+        # -------------- region end : 1. 加载训练集和测试集 ---------------
+
+        # 生成类别索引
+        label_to_index = {u'FAVOR': 0, u'AGAINST': 1, u'NONE': 2}
+        index_to_label = [u'FAVOR', u'AGAINST', u'NONE']
+
+        return train_data,test_data,label_to_index,index_to_label
+
     def save_data(self,data,path):
         '''
             保存数据
@@ -332,10 +373,12 @@ def preprocess_testA():
     :return:
     '''
 
-    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_testdata_half.csv'
+    train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_Mhalf_2090.csv'
+    # train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_testdata_Mhalf_896.csv'
     # train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_all_testdata_15000.csv'
     # output_file_path = 'result/TaskA_all_testdata_15000.csv'
-    output_file_path = 'result/TaskA_all_testdata_half_15000.csv'
+    output_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_Mhalf_2090.csv'
+    # output_file_path = 'result/TaskAA_testdata_Mhalf_896.csv'
 
     data_util = DataUtil()
 
@@ -348,13 +391,13 @@ def preprocess_testA():
     print data.head()
     # quit()
     # 将有空数值的数据去除
-    data = data_util.processing_na_value(data,
-                                         clear_na=True,
-                                         columns=[u'TEXT'],
-                                         )
+    # data = data_util.processing_na_value(data,
+    #                                      clear_na=True,
+    #                                      columns=[u'TEXT'],
+    #                                      )
     logging.debug('去除TEXT字段空值数据后剩下%d条数据。'%len(data))
     print '去除空值数据后剩下%d条数据。'%len(data)
-    print '有%d个句子是已经标注'%sum(data[u'PREDICT'].notnull())
+    # print '有%d个句子是已经标注'%sum(data[u'PREDICT'].notnull())
 
     # -------------- region start : 对句子开始分词 -------------
     logging.debug('-' * 20)
@@ -370,7 +413,7 @@ def preprocess_testA():
     count_null_data = sum(data['WORDS'].isnull())
     logging.debug('WORDS出现空值数：%d' % count_null_data)
     print 'WORDS出现空值数：%d' % count_null_data
-    data = data_util.processing_na_value(data, clear_na=True, columns=['WORDS'])
+    # data = data_util.processing_na_value(data, clear_na=True, columns=['WORDS'])
     # logging.debug('去除WORDS空值数据后剩下%d条数据。' % len(data))
     print '去除WORDS空值数据后剩下%d条数据。' % len(data)
 
