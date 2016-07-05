@@ -12,9 +12,11 @@ from data_processing.data_util import DataUtil
 
 verbose = 1
 word_count_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/word_count_17211.csv'
+# word_count_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/word_count_14110.csv'
 train_X_feature_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/cue_pharse/result/train_X_feature.npy'
 vocabulary_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/cue_pharse/result/vocabulary.npy'
 train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_all_data_2986.csv'
+# train_dataA_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_full_2090.csv'
 
 selected_keywords_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/cue_pharse/result/selected_keywords.csv'
 
@@ -189,6 +191,8 @@ def process_1gram():
     data_word_count = data_util.load_data(word_count_file_path)
 
     mask1,mask2,mask3 = get_mask(type=select_keyword_type)
+    print(select_keyword_type)
+    print(mask1,mask2,mask3)
     mask1 = (data_word_count['SUPPORT'].as_matrix() >= mask1[0]) * (data_word_count['FREQ'].as_matrix() >= mask1[1])
 
     mask2 = (data_word_count['SUPPORT'].as_matrix() >= mask2[0]) * (data_word_count['FREQ'].as_matrix() >= mask2[1])
@@ -229,11 +233,18 @@ def process_2gram(candiate_words):
     for i in candiate_words['WORD'].tolist():
         for j in candiate_words['WORD'].tolist():
             # print','.join(sorted([i, j]))
+            # if i==u'人口':
+            #     print(i)
+            #     quit()
             if i != j:
-                candiate_2gram.append([i, j])
+                candiate_2gram.append(','.join(sorted([i, j])))
 
+    candiate_2gram = list(set(candiate_2gram))
+    print(','.join(candiate_2gram[:50]))
     print('2gram候选词个数有：%d'%len(candiate_2gram))
-
+    print(u'央视,曝' in candiate_2gram)
+    print(u'人口,社会' in candiate_2gram)
+    # quit()
     count_2gram_count = lambda vector, x, y: int(vector[token_to_id[x]] > 0 and vector[token_to_id[y]] > 0)
     filter_mask1,filter_mask2,filter_mask3 = get_mask(select_keyword_type)
 
@@ -244,7 +255,8 @@ def process_2gram(candiate_words):
         filter2 = np.asarray([train_dataA['STANCE'].as_matrix() == u'NONE']).flatten()
         filter3 = np.asarray([train_dataA['STANCE'].as_matrix() == u'AGAINST']).flatten()
         #     # printfilter1
-        for x, y in candiate_2gram:
+        for i in candiate_2gram:
+            x, y = i.split(',')
             #         # printx,y
             #         # printcount_2gram_count(train_X_feature[0],x,y)
             count = np.asarray(map(lambda vector: count_2gram_count(vector, x, y), train_X_feature))
@@ -284,6 +296,100 @@ def process_2gram(candiate_words):
                             )
 
 
+def process_2gram_rc(candiate_words,rest_words):
+    '''
+        由剩余词和候选词1gram内两两组合出候选2gram，再对2gram统计，符合条件的选出作为特征词
+
+    :return:
+    '''
+
+    # 候选词内部两两组合出 候选2gram
+    candiate_2gram = []
+    for i in rest_words['WORD'].tolist():
+        for j in candiate_words['WORD'].tolist():
+            # print','.join(sorted([i, j]))
+            if i==u'超女' and j==u'青春':
+                print(i,j)
+            if j==u'超女' and i==u'青春':
+                print(i,j)
+            if i != j:
+                candiate_2gram.append(','.join(sorted([i, j])))
+    print(candiate_2gram[:50])
+    candiate_2gram = list(set(candiate_2gram))
+    print('2gram候选词个数有：%d'%len(candiate_2gram))
+    count_2gram_count = lambda vector, x, y: int(vector[token_to_id[x]] > 0 and vector[token_to_id[y]] > 0)
+    filter1 = np.asarray([train_dataA['STANCE'].as_matrix() == u'FAVOR']).flatten()
+    filter2 = np.asarray([train_dataA['STANCE'].as_matrix() == u'NONE']).flatten()
+    filter3 = np.asarray([train_dataA['STANCE'].as_matrix() == u'AGAINST']).flatten()
+    temp = map(lambda x:int(x[token_to_id[u'超女']] > 0 and x[token_to_id[u'跳']]>0),train_X_feature)
+    print(temp)
+    freq = sum(temp)
+    favor_freq = sum(np.asarray(temp)[filter1])
+    against_freq = sum(np.asarray(temp)[filter2])
+    none_freq = sum(np.asarray(temp)[filter3])
+
+    support = np.nan_to_num(
+                    max(favor_freq, against_freq, none_freq) / (1.0 * (favor_freq + against_freq + none_freq)))
+    print(support)
+
+    mask2 = (support >= 0.8) * (freq >= 5)
+    #         # support>=0.6 & frequency>=5
+    mask3 = (support >= 0.75) * (freq >= 10)
+    #         # printmask2+mask3
+    print(mask2+mask3)
+    quit()
+    filter_mask1,filter_mask2,filter_mask3 = get_mask(select_keyword_type)
+    #
+    # with io.open('result/selected_2gram.csv', 'w', encoding='utf8') as fout:
+    #     fout.write(u'WORD\tFREQ\tFAVOR\tAGAINST\tNONE\tSUPPORT\n')
+    #     counter = 0
+    #     filter1 = np.asarray([train_dataA['STANCE'].as_matrix() == u'FAVOR']).flatten()
+    #     filter2 = np.asarray([train_dataA['STANCE'].as_matrix() == u'NONE']).flatten()
+    #     filter3 = np.asarray([train_dataA['STANCE'].as_matrix() == u'AGAINST']).flatten()
+    #     #     # printfilter1
+    #     for i in candiate_2gram:
+    #         x, y = i.split(',')
+    #         #         # printx,y
+    #         #         # printcount_2gram_count(train_X_feature[0],x,y)
+    #         count = np.asarray(map(lambda vector: count_2gram_count(vector, x, y), train_X_feature))
+    #         freq = np.sum(count)
+    #         # printcount
+    #         favor_freq = np.sum(count[filter1])
+    #         none_freq = np.sum(count[filter2])
+    #         against_freq = np.sum(count[filter3])
+    #         support = np.nan_to_num(
+    #             max(favor_freq, against_freq, none_freq) / (1.0 * (favor_freq + against_freq + none_freq)))
+    #
+    #         mask2 = (support >= filter_mask2[0]) * (freq >= filter_mask2[1])
+    #         mask3 = (support >= filter_mask3[0]) * (freq >= filter_mask3[1])
+    #         # printmask2+mask3
+    #         # print(x, y)
+    #         if mask2 + mask3:
+    #             print(x, y)
+    #             print(freq, favor_freq, against_freq, none_freq, support)
+    #             fout.write(u'%s,%s\t%d\t%d\t%d\t%d\t%f\n' % (x, y, freq, favor_freq, against_freq, none_freq, support))
+    #
+    #         counter += 1
+    #         if counter % 1000 == 0:
+    #             print('第%d個數據...' % counter)
+
+    data_2gram_count = data_util.load_data('result/selected_2gram.csv')
+    # printdata_2gram_count[u'SUPPORT']
+    # printdata_2gram_count.shape
+    print(data_2gram_count.columns)
+    print(data_2gram_count.shape)
+    data_2gram_count = data_2gram_count.sort_values(by=[u'SUPPORT', u'FREQ', u'WORD'], ascending=False)
+    data_2gram_count = data_2gram_count[[u'WORD', u'FAVOR', u'AGAINST', u'NONE', u'FREQ', u'SUPPORT']]
+    print(data_2gram_count.head())
+    print(data_2gram_count.shape)
+    data_2gram_count.to_csv('result/selected_2gram_count.csv',
+                            sep='\t',
+                            index=False,
+                            header=True,
+                            encoding='utf8',
+                            )
+
+
 def test():
     test_data = data_util.load_data('/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/dataA_150len.csv')
     test_data['WORDS'] = test_data['TEXT'].apply(data_util.segment_sentence)
@@ -299,9 +405,10 @@ def test():
 
 
 if __name__ == '__main__':
-    select_keyword_type = 'L'
+    select_keyword_type = 'M'
     # test()
     # count_word_freq()
     candiate_words,keywords,rest_words = process_1gram()
-    process_2gram(candiate_words)
+    # process_2gram(candiate_words)
+    process_2gram_rc(candiate_words,rest_words)
     # data_util.save_data(keywords,selected_keywords_file_path)

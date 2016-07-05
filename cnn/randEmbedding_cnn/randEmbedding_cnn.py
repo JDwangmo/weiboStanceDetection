@@ -60,7 +60,10 @@ test_X = (test_data['TARGET'] + ',' + test_data['TEXT']).as_matrix()
 
 train_y = train_data['STANCE'].map(label_to_index).as_matrix()
 test_y = test_data['STANCE'].map(label_to_index).as_matrix()
-
+# print set(train_data['STANCE'])
+# print train_y
+# print test_y
+# quit()
 feature_encoder = FeatureEncoder(train_data=train_X,
                                  sentence_padding_length=config['sentence_padding_length'],
                                  verbose=0,
@@ -89,8 +92,6 @@ if verbose > 2:
     logging.debug('-' * 20)
     print '-' * 20
 # -------------- region end : 2. 转换数据格式，以可以进行分类 ---------------
-
-
 
 for seed in config['rand_seed']:
 
@@ -161,9 +162,16 @@ for seed in config['rand_seed']:
         print '4. 预测'
     # -------------- code start : 开始 -------------
 
+    y_predict = map(rand_embedding_cnn.predict,test_X_feature)
+    test_data[u'Y_PRED'] = [index_to_label[item] for item in y_predict]
+    data_util.save_data(test_data,path=result_file_path)
+
+    quit()
+    rand_embedding_cnn.predict(feature_encoder.encoding_sentence('你好吗'))
+
     print index_to_label[rand_embedding_cnn.predict(feature_encoder.encoding_sentence('你好吗'))]
 
-    y_pred, is_correct, accu,f1 = rand_embedding_cnn.accuracy((map(feature_encoder.encoding_sentence, test_X), test_y))
+    y_pred, is_correct, accu,f1 = rand_embedding_cnn.accuracy((test_X_feature, test_y))
     logging.debug('F1(macro)为：%f'%(np.average(f1[:-1])))
     print 'F1(macro)为：%f'%(np.average(f1[:-1]))
     test_data[u'IS_CORRECT'] = is_correct

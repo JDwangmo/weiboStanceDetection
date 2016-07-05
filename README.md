@@ -83,6 +83,7 @@
                 - 训练全： [train_data/train_data_full_2090.csv]. 句子最长长度为：175,句子最短长度为：3,句子平均长度为：44,字典数量：14110。
                 - 训练半H：[train_data/train_data_half_2090.csv]. 所有句子都切成一半，结果：句子最长长度为：93，句子最短长度为：2，句子平均长度为：27,字典数量：10543。
                 - 训练半M：[train_data/TaskAA_train_data_Mhalf_2090.csv]. 切分方案为：>4切一半，<=4不切全保留，结果：句子最长长度为：93，句子最短长度为：3，句子平均长度为：30,字典数量：11241。
+                - 训练final：[train_data/TaskAA_train_data_final_3000.csv]. 3000句训练数据。句子最长长度为：175,句子最短长度为：3,句子平均长度为：45,字典数量：17308.
                 - 测试全：[train_data/test_data_full_896.csv].
                 - 测试半H：[train_data/test_data_half_896.csv].
                 - 测试半M：[train_data/TaskAA_test_data_Mhalf_896.csv].
@@ -117,8 +118,11 @@
             | 训练全  | 93  | adadelta|248  |1000 | 50  | 30/50/30  | 测试半M  | 484(0.540179)  | 0.601959([ 0.59649123，0.60742706，0.]) |  0.9252 |RandEmbeddingCNN_adadelta_93len_50dim_1k_fulltrain_30epoch_1000seed.pkl|
             | 训练全  | 93  | adadelta|248  |1000 | 300  | 30/50/30  | 测试半M  | 526(0.587054)  | 0.641443([ 0.62879789,0.65408805,0.23333333]) |  0.\* |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_1000seed.pkl|
             | 训练全  | 93  | adadelta|248  |2000 | 300  | 30/50/30  | 测试半M  | 524(0.584821)  | 0.631070([ 0.60892388,0.65321564,0.27848101]) |  0.6883 |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_2000seed.pkl|
-            | 训练全  | 93  | adadelta|248  |4000 | 300  | 30/50/30  | 测试半M  | 524(0.584821)  | 0.631070([ 0.60892388,0.65321564,0.27848101]) |  0.6883 |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_2000seed.pkl|
+            | 训练全  | 93  | adadelta|248  |4000 | 300  | 30/50/30  | 测试半M  | 528(0.589286)  | 0.642195([ 0.61849711,0.66589327,0.22689076]) |  0.7685 |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_4000seed.pkl|
+            | 训练全  | 93  | adadelta|248  |5000 | 300  | 30/50/30  | 测试半M  | 527(0.588170)  | 0.628012([ 0.58860759,0.66741573,0.32592593]) |  0.6551 |RandEmbeddingCNN_adadelta_93len_300dim_1k_fulltrain_30epoch_5000seed.pkl|
             | 训练全  | 93  | 248  |1000 | 300  | 30/50/30  | 测试半M  | 361(0.402902)  | 0.448278([ 0.43196005,0.46459627,0.01075269]) |  0.9302 |RandEmbeddingCNN_sgd_93len_300dim_1k_fulltrain_30epoch_1000seed.pkl|
+            | 训练final  | 93  | 248  |1000 | 300  | 40/50/40  | 测试全  | 707(0.789062)  | 0.885205([ 0.797219,0.97319035,0.0]) |  0.6940 |RandEmbeddingCNN_adadelta_93len_300dim_1k_finaltrain_40epoch_1000seed.pkl|
+            | 训练final  | 93  | 248  |1000 | 300  | 60/50/60  | 测试全  | 709(0.791295)  | 0.886818([ 0.79907085,0.97456493,0.01086957]) |  0.6909 |RandEmbeddingCNN_adadelta_93len_300dim_1k_finaltrain_60epoch_1000seed.pkl|
 
         - 效果:
         - 情形1: 1层CNN;使用 [[train_data/all_data_2986.csv,2986句](https://github.com/JDwangmo/weiboStanceDetection/tree/master/train_data)]做训练.[[train_data/test_data_896.csv,896句](https://github.com/JDwangmo/weiboStanceDetection/tree/master/train_data)].结果位于[[./result/ISCSLP2016/20160618/](https://github.com/JDwangmo/weiboStanceDetection/tree/master/result/20160630/)]句子最长长度为：175,句子最短长度为：3,句子平均长度为：44.
@@ -215,22 +219,30 @@
             | 训练全  | train_data_full_20963_50dim_50iter_cbow.gem  |1337| 150  | 248  | 300  | 200/100/200  | 测试全  | \*(0.5212052)  | \*([ 0.59142212  0.54600302  0.19753086])  | \*|
 
 - cue_pharse :关键词匹配
-     - cue_pharse.py:使用[train_data/TaskAA_all_data_2986.csv]进行统计
+
+     - cue_pharse.py:
+     1. 使用[train_data/TaskAA_train_data_full_2090.csv]进行统计,总共有14110个词[train_data/word_count_14110.csv]。
+        - 方案3(L版本)：条件最宽松
+            - 只取support>=0.55 & frequency>=5  的取出来做候选，共1171个.[train_data/candiate_keywords_1171.csv]
+            1. support>=0.75 & frequency>=5 （共\*个）和 support>=0.7 & frequency>=10 的直接出线 （增加共\*个）,合起来共368个。[train_data/selected_keywords_L_368.csv]
+            2. 全部非自身（也即是1171个）的候选，两两组合(1370070个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(1522个)。[train_data/selected_2gram_Lc_1522.csv]
+            3. 出线后的词，直接用于第一轮（基于规则的判断），多个词同时出现在同一句会很正常，可以就取最高support的。（对于（2）的词，只在他大于入选的组合词也在时才纳入比较）
+     2. 使用[train_data/TaskAA_all_data_2986.csv]进行统计,总共有17211个词[train_data/word_count_17211.csv]。
         - 方案1(H版本)：条件最严格
-            - 只取support>=0.6 & frequency>=5  的取出来做候选，共1272个
-            1. support>=0.85 & frequency>=5 （共\*个）和 support>=0.8 & frequency>=10 的直接出线 （增加共\*个）,合起来共188个。[train_data/selected_keywords_188.csv]
-                - 2A. 剩余的 1084个，和全部非自身（也即是1272个）的候选，两两组合(1377764个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(565个)。[train_data/selected_2gram_565.csv]
-                - 2B. 全部非自身（也即是1272个）的候选，两两组合(1616712个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(866个)。[train_data/selected_2gram_H_866.csv]
+            - 只取support>=0.6 & frequency>=5  的取出来做候选，共1272个[train_data/candiate_keywords_1272.csv].
+            1. support>=0.85 & frequency>=5 （共\*个）和 support>=0.8 & frequency>=10 的直接出线 （增加共\*个）,合起来共188个。[train_data/selected_keywords_H_188.csv]
+                - 2A. 剩余的 1084个，和全部非自身（也即是1272个）的候选，两两组合(1377764个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(565个)。[train_data/selected_2gram_H_565.csv]
+                - 2B. 全部非自身（也即是1272个）的候选，两两组合(1616712个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(866个)。[train_data/selected_2gram_Hc_866.csv]
             3. 出线后的词，直接用于第一轮（基于规则的判断），多个词同时出现在同一句会很正常，可以就取最高support的。（对于（2）的词，只在他大于入选的组合词也在时才纳入比较）
             - （1）全句，训练、测试
             - （2）半句，训练、测试
             - （3）全句训练，半句测试 （比（1）和（2）增加了训练语料的保留，当然会顺带有些副作用，比如那些有转折的也一起参加训练，好坏难说，交给程序结果来看吧）    
             
         - 方案2(M版本)：条件中等
-            - 只取support>=0.6 & frequency>=5  的取出来做候选，共1272个
-            1. support>=0.8 & frequency>=5 （共369个）和 support>=0.75 & frequency>=10 的直接出线 （增加共40个）,合起来共406个。[train_data/selected_keywords_406.csv]
-                - 2A. 剩余的 866个，和全部非自身（也即是1272个）的候选，两两组合，如果有达到上述（1）标注的也出线，这个统计看看有多少(673个)。[train_data/selected_2gram_673.csv]
-                - 2B. 全部非自身（也即是1272个）的候选，两两组合(1616712个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(1288个)。[train_data/selected_2gram_M_1288.csv]
+            - 只取support>=0.6 & frequency>=5  的取出来做候选，共1272个[train_data/candiate_keywords_1272.csv].
+            1. support>=0.8 & frequency>=5 （共369个）和 support>=0.75 & frequency>=10 的直接出线 （增加共40个）,合起来共406个。[train_data/selected_keywords_M_406.csv]
+                - 2A. 剩余的 866个，和全部非自身（也即是1272个）的候选，两两组合(726141个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(478个)。[train_data/selected_2gram_M_478.csv]
+                - 2B. 全部非自身（也即是1272个）的候选，两两组合(808356个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(644个)。[train_data/selected_2gram_Mc_644.csv]
             3. 出线后的词，直接用于第一轮（基于规则的判断），多个词同时出现在同一句会很正常，可以就取最高support的。（对于（2）的词，只在他大于入选的组合词也在时才纳入比较）
             - （1）全句，训练、测试
             - （2）半句，训练、测试
@@ -238,8 +250,8 @@
                     
         - 方案3(L版本)：条件最宽松
             - 只取support>=0.55 & frequency>=5  的取出来做候选，共1593个.[]
-            1. support>=0.75 & frequency>=5 （共\*个）和 support>=0.7 & frequency>=10 的直接出线 （增加共\*个）,合起来共541个。[train_data/selected_keywords_541.csv]
-            2. 全部非自身（也即是1593个）的候选，两两组合(2536056个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(2780个)。[train_data/selected_2gram_2780.csv]
+            1. support>=0.75 & frequency>=5 （共\*个）和 support>=0.7 & frequency>=10 的直接出线 （增加共\*个）,合起来共541个。[train_data/selected_keywords_L_541.csv]
+            2. 全部非自身（也即是1593个）的候选，两两组合(2536056个)，如果有达到上述（1）标注的也出线，这个统计看看有多少(2780个)。[train_data/selected_2gram_Lc_2780.csv]
             3. 出线后的词，直接用于第一轮（基于规则的判断），多个词同时出现在同一句会很正常，可以就取最高support的。（对于（2）的词，只在他大于入选的组合词也在时才纳入比较）
             - （1）全句，训练、测试
             - （2）半句，训练、测试

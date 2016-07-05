@@ -64,8 +64,8 @@ class DataUtil(object):
             logging.debug('1. 加载训练集和测试集')
             print '1. 加载训练集和测试集'
         # -------------- code start : 开始 -------------
-        train_data_file_path = (config['train_data_filte_path']) % config['train_data_type']
-        test_data_file_path = (config['test_data_filte_path']) % config['test_data_type']
+        train_data_file_path = (config['train_data_file_path']) % config['train_data_type']
+        test_data_file_path = (config['test_data_file_path']) % config['test_data_type']
         logging.debug(train_data_file_path)
         print train_data_file_path
         logging.debug(test_data_file_path)
@@ -449,7 +449,7 @@ def padding_dataAA():
     # print data[data['STANCE'].isnull()]['STANCE']
     data_util.print_data_detail(data, has_stance=True)
     # print data.loc[3001]
-    data.loc[data['STANCE'].isnull(),'STANCE'] = 'None'
+    data.loc[data['STANCE'].isnull(),'STANCE'] = 'NONE'
 
     data_util.print_data_detail(data, has_stance=True)
     print data.shape
