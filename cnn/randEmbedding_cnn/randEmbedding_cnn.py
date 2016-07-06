@@ -80,7 +80,7 @@ feature_encoder = FeatureEncoder(train_data=train_X,
                                  )
 
 train_X_feature = feature_encoder.train_padding_index
-test_X_feature = map(feature_encoder.encoding_sentence, test_X)
+test_X_feature = map(feature_encoder.transform_sentence, test_X)
 
 feature_encoder.print_sentence_length_detail()
 print feature_encoder.train_data_dict_size
@@ -167,9 +167,9 @@ for seed in config['rand_seed']:
     data_util.save_data(test_data,path=result_file_path)
 
     quit()
-    rand_embedding_cnn.predict(feature_encoder.encoding_sentence('你好吗'))
+    rand_embedding_cnn.predict(feature_encoder.transform_sentence('你好吗'))
 
-    print index_to_label[rand_embedding_cnn.predict(feature_encoder.encoding_sentence('你好吗'))]
+    print index_to_label[rand_embedding_cnn.predict(feature_encoder.transform_sentence('你好吗'))]
 
     y_pred, is_correct, accu,f1 = rand_embedding_cnn.accuracy((test_X_feature, test_y))
     logging.debug('F1(macro)为：%f'%(np.average(f1[:-1])))

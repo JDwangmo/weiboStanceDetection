@@ -124,7 +124,7 @@ for seed in config['rand_seed']:
     if config['refresh_all_model'] or not os.path.exists(model_file_path):
         # 训练模型
         dcnn_model.fit((feature_encoder.train_padding_index, train_y),
-                       (map(feature_encoder.encoding_sentence, test_X), test_y))
+                       (map(feature_encoder.transform_sentence, test_X), test_y))
         # 保存模型
         dcnn_model.save_model(model_file_path)
     else:
@@ -147,9 +147,9 @@ for seed in config['rand_seed']:
 
 
 
-    print(index_to_label[dcnn_model.predict(feature_encoder.encoding_sentence('你好吗'))])
+    print(index_to_label[dcnn_model.predict(feature_encoder.transform_sentence('你好吗'))])
 
-    y_pred, is_correct, accu,f1 = dcnn_model.accuracy((map(feature_encoder.encoding_sentence, test_X), test_y))
+    y_pred, is_correct, accu,f1 = dcnn_model.accuracy((map(feature_encoder.transform_sentence, test_X), test_y))
     logging.debug('F1(macro)为：%f'%(np.average(f1[:-1])))
     print('F1(macro)为：%f' % (np.average(f1[:-1])))
     test_data[u'IS_CORRECT'] = is_correct

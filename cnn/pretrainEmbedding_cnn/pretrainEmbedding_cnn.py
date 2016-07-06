@@ -77,7 +77,7 @@ feature_encoder = FeatureEncoder(train_data=train_X,
                                  )
 
 train_X_feature = feature_encoder.train_padding_index
-test_X_feature = map(feature_encoder.encoding_sentence, test_X)
+test_X_feature = map(feature_encoder.transform_sentence, test_X)
 
 feature_encoder.print_sentence_length_detail()
 print feature_encoder.train_data_dict_size
@@ -142,7 +142,7 @@ for seed in config['rand_seed']:
     if config['refresh_all_model'] or not os.path.exists(model_file_path):
         # 训练模型
         rand_embedding_cnn.fit((feature_encoder.train_padding_index, train_y),
-                               (map(feature_encoder.encoding_sentence, test_X), test_y))
+                               (map(feature_encoder.transform_sentence, test_X), test_y))
         # 保存模型
         rand_embedding_cnn.save_model(model_file_path)
     else:
@@ -165,9 +165,9 @@ for seed in config['rand_seed']:
 
 
 
-    print index_to_label[rand_embedding_cnn.predict(feature_encoder.encoding_sentence('你好吗'))]
+    print index_to_label[rand_embedding_cnn.predict(feature_encoder.transform_sentence('你好吗'))]
 
-    y_pred, is_correct, accu,f1 = rand_embedding_cnn.accuracy((map(feature_encoder.encoding_sentence, test_X), test_y))
+    y_pred, is_correct, accu,f1 = rand_embedding_cnn.accuracy((map(feature_encoder.transform_sentence, test_X), test_y))
     logging.debug('F1(macro)为：%f'%(np.average(f1[:-1])))
     print 'F1(macro)为：%f'%(np.average(f1[:-1]))
     test_data[u'IS_CORRECT'] = is_correct
