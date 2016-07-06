@@ -1,0 +1,37 @@
+1. Team ID
+Scau_SDCM
+
+2. Team affiliation
+South China Agricultural University
+
+3. Contact information
+jdwang@stu.scau.edu.cn
+
+4. System specifications:
+- 4.1 Supervised or unsupervised
+Supervised 
+
+- 4.2 A description of the core approach (a few sentences is sufficient)
+Simple out of topic detection.
+Joint cue phrase based 1-gram and 2-gram method and random forest.
+
+- 4.3 Features used (e.g., n-grams, sentiment features, any kind of tweet meta-information, etc.). Please be specific, for example, the exact meta-information used. 
+1-gram, 2-gram, BOW 
+
+- 4.4 Resources used (e.g., manually or automatically created lexicons, labeled or unlabeled data, any additional set of tweets used (even if it is unlabeled), etc.). Please be specific, for example, if you used an additional set of tweets, you can specify the date range of the tweets, whether you used a resource publicly available or a resource that you created, and what search criteria were used to collect the tweets. 
+Task A Annotated Training Data 
+
+- 4.5 Tools used
+Jieba,Keras,scikit-learn.
+
+- 4.6 Significant data pre/post-processing
+Traditional Chinese to simplified Chinese conversion.
+Replace arabic numerals with "NUMBER".
+Remove some stop words. 
+
+5. References (if applicable)
+[1] Scornet E. Random Forests and Kernel Methods [J]. IEEE Transactions on Information Theory, 2015, 62(3):1485-1500.
+[2] Breiman L. Bagging predictors[J]. Machine Learning, 1996, 26(2): 123¨C140
+[3] Kim Y. Convolutional neural networks for sentence classification[C]//Proceedings of the 19th Conference on Empirical Methods in Natural Language Processing (EMNLP 2014), 2014: 1746¨C1751.
+[4] Johnson R and Zhang T. Effective use of word order for text categorization with convolutional neural networks[C]//Proceedings the 2015 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies NAACL-HLT, 2015: 103-112.
+
