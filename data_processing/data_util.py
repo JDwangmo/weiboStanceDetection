@@ -239,7 +239,7 @@ class DataUtil(object):
         print train_X_features[:5]
         vocabulary = feature_encoder.vocabulary
         print ','.join(vocabulary)
-        print feature_encoder.train_data_dict_size
+        print feature_encoder.vocabulary_size
         np.save('result/vocabulary',vocabulary)
 
         freq = np.sum(train_X_features,axis=0)

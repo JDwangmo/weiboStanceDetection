@@ -80,7 +80,7 @@ train_X_feature = feature_encoder.train_padding_index
 test_X_feature = map(feature_encoder.transform_sentence, test_X)
 
 feature_encoder.print_sentence_length_detail()
-print feature_encoder.train_data_dict_size
+print feature_encoder.vocabulary_size
 # print ','.join(sorted(feature_encoder.vocabulary))
 # quit()
 feature_encoder.print_model_descibe()
@@ -125,7 +125,7 @@ for seed in config['rand_seed']:
     rand_embedding_cnn = WordEmbeddingCNN(
         rand_seed=seed,
         verbose=verbose,
-        input_dim=feature_encoder.train_data_dict_size + 1,
+        input_dim=feature_encoder.vocabulary_size + 1,
         word_embedding_dim=config['word_embedding_dim'],
         embedding_init_weight=feature_encoder.to_embedding_weight(word2vec_file_path),
         input_length=config['sentence_padding_length'],

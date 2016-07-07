@@ -79,7 +79,7 @@ def count_word_freq():
     print(train_X_features[:5])
     vocabulary = feature_encoder.vocabulary
     print(','.join(vocabulary))
-    print('字典个数有：%d' % feature_encoder.train_data_dict_size)
+    print('字典个数有：%d' % feature_encoder.vocabulary_size)
     np.save('result/vocabulary', vocabulary)
 
     # -------------- code start : 结束 -------------
@@ -125,7 +125,7 @@ def count_word_freq():
     count_data = count_data.sort_values(by=[u'SUPPORT', u'FREQ', 'WORD'], ascending=False)
     count_data = count_data[[u'WORD', u'FAVOR', u'AGAINST', u'NONE', u'FREQ', u'SUPPORT']]
     # 保存
-    count_data.to_csv('result/word_count_%d.csv' % feature_encoder.train_data_dict_size,
+    count_data.to_csv('result/word_count_%d.csv' % feature_encoder.vocabulary_size,
                       sep='\t',
                       index=False,
                       header=True,

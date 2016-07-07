@@ -69,7 +69,7 @@ feature_encoder = FeatureEncoder(train_data=train_X,
                                  remove_url=True,
                                  )
 feature_encoder.print_sentence_length_detail()
-print(feature_encoder.train_data_dict_size)
+print(feature_encoder.vocabulary_size)
 # print ','.join(sorted(feature_encoder.vocabulary))
 # quit()
 feature_encoder.print_model_descibe()
@@ -105,7 +105,7 @@ for seed in config['rand_seed']:
         rand_seed=1337,
         verbose=3,
         batch_size=32,
-        vocab_size=feature_encoder.train_data_dict_size,
+        vocab_size=feature_encoder.vocabulary_size,
         word_embedding_dim=config['word_embedding_dim'],
         input_length=config['sentence_padding_length'],
         num_labels=len(label_to_index),
