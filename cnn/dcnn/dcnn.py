@@ -53,21 +53,23 @@ test_X = (test_data['TARGET'] + ',' + test_data['TEXT']).as_matrix()
 
 train_y = train_data['STANCE'].map(label_to_index).as_matrix()
 test_y = test_data['STANCE'].map(label_to_index).as_matrix()
+feature_encoder = FeatureEncoder(
+    sentence_padding_length=config['sentence_padding_length'],
+    verbose=0,
+    need_segmented=config['need_segmented'],
+    full_mode=True,
+    remove_stopword=True,
+    replace_number=True,
+    lowercase=True,
+    zhs2zht=True,
+    remove_url=True,
+    padding_mode='center',
+    add_unkown_word=True,
+    mask_zero=True
+)
+train_X_features = feature_encoder.fit_transform(train_data=train_X)
+test_X_features = feature_encoder.transform(test_X)
 
-feature_encoder = FeatureEncoder(train_data=train_X,
-                                 sentence_padding_length=config['sentence_padding_length'],
-                                 verbose=0,
-                                 need_segmented=config['need_segmented'],
-                                 full_mode=True,
-                                 replace_number=True,
-                                 remove_stopword=True,
-                                 lowercase=True,
-                                 padding_mode='center',
-                                 add_unkown_word=True,
-                                 mask_zero=True,
-                                 zhs2zht=True,
-                                 remove_url=True,
-                                 )
 feature_encoder.print_sentence_length_detail()
 print(feature_encoder.vocabulary_size)
 # print ','.join(sorted(feature_encoder.vocabulary))
@@ -102,29 +104,29 @@ for seed in config['rand_seed']:
     print(result_file_path)
 
     dcnn_model = DynamicCNN(
-        rand_seed=1337,
-        verbose=3,
+        rand_seed=seed,
+        verbose=config['verbose'],
         batch_size=32,
         vocab_size=feature_encoder.vocabulary_size,
         word_embedding_dim=config['word_embedding_dim'],
         input_length=config['sentence_padding_length'],
         num_labels=len(label_to_index),
-        conv_filter_type=[[10, 2, 'full'],
-                          [10, 4, 'full'],
+        conv_filter_type=[[100, 2, 'full'],
+                          [100, 4, 'full'],
                           # [100, 8, 'full'],
                           ],
-        ktop=1,
+        ktop=config['ktop'],
         embedding_dropout_rate=0.5,
         output_dropout_rate=0.5,
-        nb_epoch=10,
-        earlyStoping_patience=5,
+        nb_epoch=int(config['cnn_nb_epoch']),
+        earlyStoping_patience=config['earlyStoping_patience'],
         )
     dcnn_model.print_model_descibe()
 
     if config['refresh_all_model'] or not os.path.exists(model_file_path):
         # 训练模型
-        dcnn_model.fit((feature_encoder.train_padding_index, train_y),
-                       (map(feature_encoder.transform_sentence, test_X), test_y))
+        dcnn_model.fit((train_X_features, train_y),
+                       (test_X_features, test_y))
         # 保存模型
         dcnn_model.save_model(model_file_path)
     else:
@@ -156,7 +158,6 @@ for seed in config['rand_seed']:
     test_data[u'PREDICT'] = [index_to_label[item] for item in y_pred]
     # data_util.save_data(test_data,'tmp.tmp')
     # quit()
-    result_file_path = ''.join(config['result_file_path'])
 
     data_util.save_data(test_data,
                         path=result_file_path)
