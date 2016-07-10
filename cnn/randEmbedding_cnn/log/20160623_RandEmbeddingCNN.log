@@ -1,25 +1,25 @@
-2016-07-05 19:55:53,302 : DEBUG : ==============================
-2016-07-05 19:55:53,303 : DEBUG : None
-2016-07-05 19:55:53,303 : DEBUG : ==============================
-2016-07-05 19:55:53,303 : DEBUG : start running!
-2016-07-05 19:55:53,303 : DEBUG : ====================
-2016-07-05 19:55:53,605 : INFO : Pattern library is not installed, lemmatization won't be available.
-2016-07-05 19:55:53,780 : DEBUG : Fast version of gensim.models.word2vec is being used
-2016-07-05 19:55:53,783 : DEBUG : Fast version of gensim.models.doc2vec is being used
-2016-07-05 19:55:53,787 : INFO : 'pattern' package not found; tag filters are not available for English
-2016-07-05 19:55:54,417 : DEBUG : Building prefix dict from the default dictionary ...
-2016-07-05 19:55:54,417 : DEBUG : Loading model from cache /tmp/jieba.cache
-2016-07-05 19:55:54,637 : DEBUG : Loading model cost 0.220 seconds.
-2016-07-05 19:55:54,638 : DEBUG : Prefix dict has been built succesfully.
-2016-07-05 19:55:54,692 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_final_3000.csv
-2016-07-05 19:55:54,692 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_test_data_full_896.csv
-2016-07-05 19:55:54,893 : DEBUG : ====================
-2016-07-05 19:56:19,892 : DEBUG : ====================
-2016-07-05 19:56:19,892 : DEBUG : 首先,构建训练库字典,然后将每个词映射到一个索引,再将所有句子映射成索引的列表
-2016-07-05 19:56:19,911 : INFO : adding document #0 to Dictionary(0 unique tokens: [])
-2016-07-05 19:56:20,106 : INFO : built Dictionary(17307 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 3000 documents (total 135038 corpus positions)
-2016-07-05 19:56:20,106 : INFO : adding document #0 to Dictionary(17307 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...)
-2016-07-05 19:56:20,107 : INFO : built Dictionary(17308 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 3001 documents (total 135039 corpus positions)
-2016-07-05 19:56:51,886 : DEBUG : {'verbose': 0, 'padding_mode': 'center', 'replace_number': True, 'train_data_dict_size': 17308, 'mask_zero': True, 'sentence_padding_length': 150, 'remove_stopword': True, 'add_unkown_word': True, 'train_data_count': 3000, 'need_segmented': True, 'full_mode': True}
-2016-07-05 19:56:54,087 : DEBUG : {'earlyStoping_patience': 50, 'verbose': 1, 'embedding_init use rand': True, 'rand_seed': 0, 'nb_epoch': 30, 'num_labels': 3, 'optimizers': 'adadelta', 'conv_filter_type': [[100, 2, 300, 'valid'], [100, 4, 300, 'valid'], [100, 8, 300, 'valid']], 'output_dropout_rate': 0.5, 'input_dim': 17309, 'word_embedding_dim': 300, 'kmaxpooling_k': 1, 'embedding_dropout_rate': 0.5, 'input_length': 150}
-2016-07-05 19:56:54,087 : DEBUG : --------------------
+2016-07-10 15:43:25,956 : DEBUG : ==============================
+2016-07-10 15:43:25,956 : DEBUG : None
+2016-07-10 15:43:25,956 : DEBUG : ==============================
+2016-07-10 15:43:25,956 : DEBUG : start running!
+2016-07-10 15:43:25,956 : DEBUG : ====================
+2016-07-10 15:43:26,105 : INFO : Pattern library is not installed, lemmatization won't be available.
+2016-07-10 15:43:26,190 : DEBUG : Fast version of gensim.models.word2vec is being used
+2016-07-10 15:43:26,191 : DEBUG : Fast version of gensim.models.doc2vec is being used
+2016-07-10 15:43:26,194 : INFO : 'pattern' package not found; tag filters are not available for English
+2016-07-10 15:43:26,763 : DEBUG : Building prefix dict from the default dictionary ...
+2016-07-10 15:43:26,763 : DEBUG : Loading model from cache /tmp/jieba.cache
+2016-07-10 15:43:26,973 : DEBUG : Loading model cost 0.210 seconds.
+2016-07-10 15:43:26,974 : DEBUG : Prefix dict has been built succesfully.
+2016-07-10 15:43:27,021 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_train_data_final_3000.csv
+2016-07-10 15:43:27,021 : DEBUG : /home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskAA_test_data_full_896.csv
+2016-07-10 15:43:27,150 : DEBUG : ====================
+2016-07-10 15:43:57,037 : DEBUG : ====================
+2016-07-10 15:43:57,037 : DEBUG : 首先,构建训练库字典,然后将每个词映射到一个索引,再将所有句子映射成索引的列表
+2016-07-10 15:43:57,050 : INFO : adding document #0 to Dictionary(0 unique tokens: [])
+2016-07-10 15:43:57,308 : INFO : built Dictionary(17027 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 3000 documents (total 134555 corpus positions)
+2016-07-10 15:43:57,308 : INFO : adding document #0 to Dictionary(17027 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...)
+2016-07-10 15:43:57,308 : INFO : built Dictionary(17028 unique tokens: [u'\u8000', u'\u5f53\u4eca\u793e\u4f1a', u'\u52b1\u5fd7', u'\u5965\u8fea', u'\u6d89']...) from 3001 documents (total 134556 corpus positions)
+2016-07-10 15:44:34,778 : DEBUG : {'verbose': 0, 'padding_mode': 'center', 'replace_number': True, 'vocabulary_size': 17028, 'mask_zero': True, 'sentence_padding_length': 150, 'remove_stopword': True, 'add_unkown_word': True, 'train_data_count': 3000, 'need_segmented': True, 'full_mode': True}
+2016-07-10 15:44:37,268 : DEBUG : {'earlyStoping_patience': 50, 'verbose': 1, 'embedding_init use rand': True, 'rand_seed': 0, 'nb_epoch': 30, 'num_labels': 3, 'optimizers': 'adadelta', 'conv_filter_type': [[100, 2, 300, 'valid'], [100, 4, 300, 'valid'], [100, 8, 300, 'valid']], 'output_dropout_rate': 0.5, 'input_dim': 17029, 'word_embedding_dim': 300, 'kmaxpooling_k': 1, 'embedding_dropout_rate': 0.5, 'input_length': 150}
+2016-07-10 15:44:37,281 : DEBUG : --------------------

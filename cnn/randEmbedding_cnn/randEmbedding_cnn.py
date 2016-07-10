@@ -64,7 +64,7 @@ test_y = test_data['STANCE'].map(label_to_index).as_matrix()
 # print train_y
 # print test_y
 # quit()
-feature_encoder = FeatureEncoder(train_data=train_X,
+feature_encoder = FeatureEncoder(
                                  sentence_padding_length=config['sentence_padding_length'],
                                  verbose=0,
                                  need_segmented=config['need_segmented'],
@@ -79,7 +79,7 @@ feature_encoder = FeatureEncoder(train_data=train_X,
                                  remove_url=True,
                                  )
 
-train_X_feature = feature_encoder.train_padding_index
+train_X_feature = feature_encoder.fit_transform(train_data=train_X)
 test_X_feature = map(feature_encoder.transform_sentence, test_X)
 
 feature_encoder.print_sentence_length_detail()

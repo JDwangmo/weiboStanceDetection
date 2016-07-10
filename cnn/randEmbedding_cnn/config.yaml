@@ -24,7 +24,7 @@ randEmbedding_cnn:
     test_data_type: &test_data_type full
 #    test_data_type: &test_data_type Mhalf
 
-    refresh_all_model: False
+    refresh_all_model: True
 #    是否生成cnn深度特征
     genernate_cnn_feature: False
 
