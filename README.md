@@ -1,6 +1,13 @@
 # Weibo Stance Detection
 ### [微博立场分析](http://tcci.ccf.org.cn/conference/2016/pages/page05_evadata.html)
 
+#### [结果汇总](https://github.com/JDwangmo/weiboStanceDetection/tree/master/result)：
+- final_test_null_data_42.csv: 在最终测试集中预处理，包括去除标点符号和stopwords，去除url等，处理空句子有42句。
+- finalTest_CP_L_result.csv： 在最终测试集中，CP的L版本的结果。
+- RF(全-全-1000).csv： 在最终测试集中，RF（1000）的分类结果。
+- result_L_RF.txt： 将`final_test_null_data_42.csv`,`finalTest_CP_L_result.csv`和`RF(全-全-1000).csv`结果进行合并.CP_L+RF(1000).最终提交版本。
+- result_M_RF.txt: CP_M+RF(1000).待选版本。
+- NLPCC 2016 Shared Tasks Stance Detection in Chinese Microblogs 系统描述文件(Scau_SDCM).pdf： 系统说明。
 
 ### 实验数据
 - 任务A: 

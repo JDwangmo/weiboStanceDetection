@@ -11,7 +11,8 @@ final_test_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/data_p
 
 # 去进行分类的句子
 final_test_classify_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/train_data/TaskA_all_testdata_14966.csv'
-clasify_result_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/cnn/randEmbedding_cnn/result/temp.csv'
+# 分类结果的标签
+clasify_result_file_path = '/home/jdwang/PycharmProjects/weiboStanceDetection/data_processing/result/cp_L_rf_1000tree_classify_label.csv'
 
 
 
@@ -20,13 +21,14 @@ data_util = DataUtil()
 final_test_data = data_util.load_data(final_test_file_path)
 print(final_test_data.head())
 print(final_test_data.shape)
+# quit()
 # final_test_data = final_test_data[[]]
 print(final_test_data[final_test_data['WORDS'].isnull()].shape)
+print(final_test_data[final_test_data['WORDS'].isnull()])
 final_test_data = final_test_data[final_test_data['WORDS'].notnull()]
 data_util.save_data(final_test_data,'result/TaskA_all_testdata_15000_A.csv')
 # print(final_test_data.tail())
 # print(final_test_data.sort_values(by=['ID']).tail())
-
 quit()
 
 final_test_classify_data = data_util.load_data(final_test_classify_file_path)
@@ -34,6 +36,7 @@ clasify_result_data = data_util.load_data(clasify_result_file_path)
 final_test_classify_data[u'STANCE'] = clasify_result_data[u'PREDICT']
 print(final_test_classify_data.head())
 
+quit()
 final_test_classify_data[u'WORDS'] = final_test_classify_data[u'TEXT'].apply(data_util.segment_sentence)
 # print(final_test_data.head())
 

@@ -480,7 +480,7 @@ if __name__ == '__main__':
     # preprocess_dataAR()
 
     # NLPCC2016_Stance_Detection_Task_A_Testdata.txt预处理主流程
-    # preprocess_testA()
+    preprocess_testA()
 
     # 文件train_data / TaskAA_all_data_3000.csv 补全漏标标签处理过程
-    padding_dataAA()
+    # padding_dataAA()
