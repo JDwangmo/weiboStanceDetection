@@ -70,7 +70,7 @@ feature_encoder = FeatureEncoder(
 train_X_features = feature_encoder.fit_transform(train_data=train_X)
 test_X_features = feature_encoder.transform(test_X)
 
-feature_encoder.print_sentence_length_detail()
+feature_encoder.print_sentence_length_detail
 print(feature_encoder.vocabulary_size)
 # print ','.join(sorted(feature_encoder.vocabulary))
 # quit()

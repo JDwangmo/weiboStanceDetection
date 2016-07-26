@@ -79,7 +79,7 @@ feature_encoder = FeatureEncoder(train_data=train_X,
 train_X_feature = feature_encoder.train_padding_index
 test_X_feature = map(feature_encoder.transform_sentence, test_X)
 
-feature_encoder.print_sentence_length_detail()
+feature_encoder.print_sentence_length_detail
 print feature_encoder.vocabulary_size
 # print ','.join(sorted(feature_encoder.vocabulary))
 # quit()
