@@ -3,3 +3,4 @@
 
 ###目录
 > [dataset](https://github.com/JDwangmo/weiboStanceDetection/tree/master/version_2.0/dataset#目录):该项目的数据都来自于此.
+> [result](https://github.com/JDwangmo/weiboStanceDetection/tree/master/version_2.0/result):结果汇总.
